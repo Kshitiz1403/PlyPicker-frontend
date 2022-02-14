@@ -1,5 +1,11 @@
 import React, { useEffect, useState, useRef } from 'react'
+import { useMediaQuery } from 'react-responsive'
+
 const MegaMenu = () => {
+
+    const isMobileOrTablet = useMediaQuery({
+        query:'(max-width:768px)'
+    })
 
     const data = {
         "Wood":
@@ -9,6 +15,22 @@ const MegaMenu = () => {
         }
         ,
         "Flooring": {
+            "aFlooring": [1, 2, 3, 4],
+            "bFlooring": [3, 4, 54, 6]
+        },
+        "sdasdj": {
+            "plywood": ["century", "greenply", "blueply", "redply"],
+            "Blackwood": ["somewood", "Another wood", "yet another wood"]
+        },
+        "asdsaj": {
+            "aFlooring": [1, 2, 3, 4],
+            "bFlooring": [3, 4, 54, 6]
+        },
+        "dsadas": {
+            "plywood": ["century", "greenply", "blueply", "redply"],
+            "Blackwood": ["somewood", "Another wood", "yet another wood"]
+        },
+        "sadasda": {
             "aFlooring": [1, 2, 3, 4],
             "bFlooring": [3, 4, 54, 6]
         }
@@ -79,7 +101,7 @@ const MegaMenu = () => {
 
         return (
             <>
-                <div style={{ borderBottomWidth: isShowed ? 2 : 0, ...navItemStyle }} onMouseOver={mouseOverAction}>
+                <div style={{ borderBottomWidth: isShowed ? 2 : 0, fontWeight: isShowed? 'bold' : 'inherit' , ...navItemStyle }} onMouseOver={mouseOverAction}  >
                     {props.title}
                 </div>
             </>
@@ -98,6 +120,7 @@ const MegaMenu = () => {
         const MiniMenuStyle = {
             containerStyle: {
                 minHeight: 250,
+                width: isMobileOrTablet? '90%': 350,
                 position: 'absolute',
                 display: showNavItem ? 'flex' : 'none',
                 boxShadow: '0px 5px 10px 1px rgba(0,0,0,0.39)'
@@ -109,7 +132,7 @@ const MegaMenu = () => {
                 containerStyle: {
                     display: 'flex',
                     flexDirection: 'column',
-                    minWidth: "25vmin",
+                    minWidth: "50%",
                     backgroundColor: 'white',
                     paddingLeft: 5,
                 },
@@ -121,7 +144,7 @@ const MegaMenu = () => {
                     paddingTop: 3,
                     paddingBottom: 3,
                     paddingLeft: 3,
-                    userSelect:'none'
+                    userSelect: 'none'
                 }
             }
 
@@ -141,14 +164,14 @@ const MegaMenu = () => {
                     display: 'flex',
                     flexDirection: 'column',
                     backgroundColor: '#F2F2F2',
-                    minWidth: "25vmin",
+                    minWidth: "50%",
                     padding: 5
                 }
             }
             let title = data[props.title][activeView]
             return (
                 <div style={nestedCategoryStyle.container}>
-                    {title.map(item => <div style={{ cursor: 'pointer', padding: 3, userSelect:'none' }} key={item}>{item}</div>)}
+                    {title.map(item => <div style={{ cursor: 'pointer', padding: 3, userSelect: 'none' }} key={item}>{item}</div>)}
                 </div>
             )
         }
@@ -178,7 +201,7 @@ const MegaMenu = () => {
 
     return (
         <div>
-            <div style={navBarStyle.container}>
+            <div style={{ ...navBarStyle.container, overflowX: 'auto' }}>
                 {navItems.map(item => <NavItem key={item} title={item} />)
                 }
             </div>
