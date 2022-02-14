@@ -4,7 +4,7 @@ import MegaMenu from './components/MegaMenu'
 const Home = () => {
     
     return (
-        <div >
+        <div style={{padding:10}}>
             <MegaMenu />
             Home
         </div>

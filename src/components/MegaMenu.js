@@ -15,6 +15,30 @@ const MegaMenu = () => {
         }
     }
 
+    // When clicked outside of the mini menu, it hides the menu
+    function useOutsideAlerter(ref) {
+        useEffect(() => {
+            /**
+             * Alert if clicked on outside of element
+             */
+            function handleClickOutside(event) {
+                if (ref.current && !ref.current.contains(event.target)) {
+                    setShowNavItem(false)
+                }
+            }
+
+            // Bind the event listener
+            document.addEventListener("mousedown", handleClickOutside);
+            return () => {
+                // Unbind the event listener on clean up
+                document.removeEventListener("mousedown", handleClickOutside);
+            };
+        }, [ref]);
+    }
+
+    const wrapperRef = useRef(null);
+    useOutsideAlerter(wrapperRef);
+
     // Controls the visibility of the categories menu
     // By default, the menu is not shown
     const [showNavItem, setShowNavItem] = useState(false)
@@ -22,36 +46,12 @@ const MegaMenu = () => {
     // Stores the Navbar title. For eg. Wood. 
     // Responsible for controlling the categories for the menu
     // Defaults to the first item in the data object
-    const [activeNavItem, setActiveNavItem] = useState(Object.keys(data)[0])    
+    const [activeNavItem, setActiveNavItem] = useState(Object.keys(data)[0])
 
     const navItems = Object.keys(data)
 
     const NavItem = (props) => {
         const [isShowed, setIsShowed] = useState(false)
-
-        // function useOutsideAlerter(ref) {
-        //     useEffect(() => {
-        //         /**
-        //          * Alert if clicked on outside of element
-        //          */
-        //         function handleClickOutside(event) {
-        //             if (ref.current && !ref.current.contains(event.target)) {
-        //                 alert("You clicked outside of me!");
-        //             }
-        //         }
-
-        //         // Bind the event listener
-        //         document.addEventListener("mousedown", handleClickOutside);
-        //         return () => {
-        //             // Unbind the event listener on clean up
-        //             document.removeEventListener("mousedown", handleClickOutside);
-        //         };
-        //     }, [ref]);
-        // }
-
-        // const wrapperRef = useRef(null);
-        // useOutsideAlerter(wrapperRef);
-
 
         const mouseOverAction = () => {
             setShowNavItem(true)
@@ -64,16 +64,15 @@ const MegaMenu = () => {
             setActiveNavItem(props.title)
         }
 
-        const mouseClickAction = () => {
-            setShowNavItem(!showNavItem)
-            setIsShowed(!isShowed)
-            setActiveNavItem(props.title)
-        }
+        // const mouseClickAction = () => {
+        //     setShowNavItem(!showNavItem)
+        //     setIsShowed(!isShowed)
+        //     setActiveNavItem(props.title)
+        // }
 
         const navItemStyle = {
             marginRight: 50,
             textAlign: 'center',
-            marginLeft: 20,
             paddingBottom: 10,
             borderStyle: 'solid',
             borderTopWidth: 0,
@@ -86,9 +85,9 @@ const MegaMenu = () => {
         return (
             <div>
                 <div style={{ borderBottomWidth: isShowed ? 2 : 0, ...navItemStyle }}
-                    //  onMouseOver={mouseOverAction}
-                    //   onMouseLeave={mouseLeaveAction}
-                    onClick={mouseClickAction}
+                    onMouseOver={mouseOverAction}
+                //   onMouseLeave={mouseLeaveAction}
+                // onClick={mouseClickAction}
                 >
                     {props.title}
                 </div>
@@ -107,11 +106,10 @@ const MegaMenu = () => {
 
         const MiniMenuStyle = {
             containerStyle: {
-                height: 250,
-                backgroundColor: 'blue',
-                top: 50,
+                minHeight: 250,
                 position: 'absolute',
                 display: showNavItem ? 'flex' : 'none',
+                boxShadow: '0px 5px 10px 1px rgba(0,0,0,0.39)'
             }
         }
 
@@ -120,20 +118,22 @@ const MegaMenu = () => {
                 containerStyle: {
                     display: 'flex',
                     flexDirection: 'column',
-                    minWidth: "25vmin"
+                    minWidth: "25vmin",
+                    backgroundColor: 'white',
+                    padding: 5
                 },
                 itemStyle: {
                     display: 'flex',
                     flexDirection: 'row',
                     justifyContent: 'space-between',
-                    backgroundColor: 'red',
-                    cursor: 'pointer'
+                    cursor: 'pointer',
+                    padding: 3
                 }
             }
 
             return <div style={subCategoryStyle.containerStyle}>
                 {miniMenuData.map(item => <div key={item} style={subCategoryStyle.itemStyle} onClick={() => setActiveView(item)}>
-                    <div>{item}</div>
+                    <div style={{ fontWeight: activeView == item ? 'bold' : 'inherit' }}>{item}</div>
                     <div>{activeView == item ? ">" : null}</div>
                 </div>
                 )}
@@ -144,19 +144,23 @@ const MegaMenu = () => {
         const NestedMenu = () => {
             const nestedCategoryStyle = {
                 container: {
-                    display: 'flex', flexDirection: 'column', backgroundColor: 'green', minWidth: "25vmin"
+                    display: 'flex',
+                    flexDirection: 'column',
+                    backgroundColor: '#F2F2F2',
+                    minWidth: "25vmin",
+                    padding: 5
                 }
             }
             let title = data[props.title][activeView]
             return (
                 <div style={nestedCategoryStyle.container}>
-                    {title.map(item => <div style={{ cursor: 'pointer' }} key={item}>{item}</div>)}
+                    {title.map(item => <div style={{ cursor: 'pointer', padding: 3 }} key={item}>{item}</div>)}
                 </div>
             )
         }
 
         return (
-            <div style={MiniMenuStyle.containerStyle}>
+            <div style={{ ...MiniMenuStyle.containerStyle, }} ref={wrapperRef}>
                 <SubMenu />
                 <NestedMenu />
             </div>
@@ -165,7 +169,16 @@ const MegaMenu = () => {
 
     const navBarStyle = {
         container: {
-            height: 50, display: 'flex', flexDirection: 'row', alignItems: 'center', borderStyle: 'solid', borderTopWidth: 0, borderLeftWidth: 0, borderRightWidth: 0, borderBottomWidth: 0.5, borderColor: 'black'
+            height: 50,
+            display: 'flex',
+            flexDirection: 'row',
+            alignItems: 'center',
+            borderStyle: 'solid',
+            borderTopWidth: 0,
+            borderLeftWidth: 0,
+            borderRightWidth: 0,
+            borderBottomWidth: 0.5,
+            borderColor: '#F2F2F2'
         }
     }
 
@@ -175,7 +188,7 @@ const MegaMenu = () => {
                 {navItems.map(item => <NavItem key={item} title={item} />)
                 }
             </div>
-            <MiniMenu title={activeNavItem} />
+            <MiniMenu title={activeNavItem}/>
         </div>
     )
 }
