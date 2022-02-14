@@ -1,5 +1,4 @@
 import React, { useEffect, useState, useRef } from 'react'
-
 const MegaMenu = () => {
 
     const data = {
@@ -50,6 +49,13 @@ const MegaMenu = () => {
 
     const navItems = Object.keys(data)
 
+    const Triangle = () => {
+        return (
+            <div style={{ width: 0, height: 0, borderTop: '10px solid transparent', borderBottom: '10px solid transparent', borderRight: '10px solid #F2F2F2' }}>
+            </div>
+        )
+    }
+
     const NavItem = (props) => {
         const [isShowed, setIsShowed] = useState(false)
 
@@ -58,17 +64,6 @@ const MegaMenu = () => {
             setIsShowed(true)
             setActiveNavItem(props.title)
         }
-        const mouseLeaveAction = () => {
-            setShowNavItem(false)
-            setIsShowed(false)
-            setActiveNavItem(props.title)
-        }
-
-        // const mouseClickAction = () => {
-        //     setShowNavItem(!showNavItem)
-        //     setIsShowed(!isShowed)
-        //     setActiveNavItem(props.title)
-        // }
 
         const navItemStyle = {
             marginRight: 50,
@@ -83,15 +78,11 @@ const MegaMenu = () => {
         }
 
         return (
-            <div>
-                <div style={{ borderBottomWidth: isShowed ? 2 : 0, ...navItemStyle }}
-                    onMouseOver={mouseOverAction}
-                //   onMouseLeave={mouseLeaveAction}
-                // onClick={mouseClickAction}
-                >
+            <>
+                <div style={{ borderBottomWidth: isShowed ? 2 : 0, ...navItemStyle }} onMouseOver={mouseOverAction}>
                     {props.title}
                 </div>
-            </div>
+            </>
         )
     }
 
@@ -120,21 +111,24 @@ const MegaMenu = () => {
                     flexDirection: 'column',
                     minWidth: "25vmin",
                     backgroundColor: 'white',
-                    padding: 5
+                    paddingLeft: 5,
                 },
                 itemStyle: {
                     display: 'flex',
                     flexDirection: 'row',
                     justifyContent: 'space-between',
                     cursor: 'pointer',
-                    padding: 3
+                    paddingTop: 3,
+                    paddingBottom: 3,
+                    paddingLeft: 3,
+                    userSelect:'none'
                 }
             }
 
             return <div style={subCategoryStyle.containerStyle}>
-                {miniMenuData.map(item => <div key={item} style={subCategoryStyle.itemStyle} onClick={() => setActiveView(item)}>
-                    <div style={{ fontWeight: activeView == item ? 'bold' : 'inherit' }}>{item}</div>
-                    <div>{activeView == item ? ">" : null}</div>
+                {miniMenuData.map(item => <div key={item} style={{ ...subCategoryStyle.itemStyle }} onMouseOver={() => setActiveView(item)}>
+                    <div style={{ fontWeight: activeView === item ? 'bold' : 'inherit' }}>{item}</div>
+                    {activeView === item ? <Triangle /> : null}
                 </div>
                 )}
             </div>
@@ -154,7 +148,7 @@ const MegaMenu = () => {
             let title = data[props.title][activeView]
             return (
                 <div style={nestedCategoryStyle.container}>
-                    {title.map(item => <div style={{ cursor: 'pointer', padding: 3 }} key={item}>{item}</div>)}
+                    {title.map(item => <div style={{ cursor: 'pointer', padding: 3, userSelect:'none' }} key={item}>{item}</div>)}
                 </div>
             )
         }
@@ -188,7 +182,7 @@ const MegaMenu = () => {
                 {navItems.map(item => <NavItem key={item} title={item} />)
                 }
             </div>
-            <MiniMenu title={activeNavItem}/>
+            <MiniMenu title={activeNavItem} />
         </div>
     )
 }
