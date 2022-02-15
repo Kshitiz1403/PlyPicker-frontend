@@ -136,7 +136,7 @@ const MegaMenu = () => {
             }
         }
 
-        const SubMenu = () => {
+        const SubCategoryMenu = () => {
             const subCategoryStyle = {
                 containerStyle: {
                     display: 'flex',
@@ -167,7 +167,7 @@ const MegaMenu = () => {
         }
 
 
-        const NestedMenu = () => {
+        const GroupMenu = () => {
             const nestedCategoryStyle = {
                 container: {
                     display: 'flex',
@@ -190,8 +190,8 @@ const MegaMenu = () => {
 
         return (
             <div style={{ ...MiniMenuStyle.containerStyle, }} ref={wrapperRef}>
-                <SubMenu />
-                <NestedMenu />
+                <SubCategoryMenu />
+                <GroupMenu />
             </div>
         )
     }
