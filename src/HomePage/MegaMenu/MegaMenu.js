@@ -1,5 +1,7 @@
+import axios from 'axios'
 import React, { useEffect, useState, useRef } from 'react'
 import { useMediaQuery } from 'react-responsive'
+import { PORT } from '../../App'
 
 const MegaMenu = () => {
 
@@ -7,32 +9,55 @@ const MegaMenu = () => {
         query:'(max-width:768px)'
     })
 
-    const data = {
-        "Wood":
-        {
-            "plywood": ["century", "greenply", "blueply", "redply"],
-            "Blackwood": ["somewood", "Another wood", "yet another wood"]
+    // Performs all network requests for categories, subcategories and grops
+    useEffect(() => {
+        getCategories()
+        getSubCategories()
+        getGroups()
+    }, [])
+
+    const [categories, setCategories] = useState([])
+    const [subCategories, setSubCategories] = useState([])
+    const [groups, setGroups] = useState([])
+
+
+    // Controls the visibility of the categories menu
+    // By default, the menu is not shown
+    const [showNavItem, setShowNavItem] = useState(false)
+
+    // States to manage selected category. Initialized with the first category
+    const [activeCategory, setActiveCategory] = useState(Object(categories[0])._id)
+
+    // Gets the categories 
+    const getCategories = async () => {
+        try {
+            const categoriesData = await (await axios.get(`${PORT}/categories`)).data
+            setCategories(categoriesData)
         }
-        ,
-        "Flooring": {
-            "aFlooring": [1, 2, 3, 4],
-            "bFlooring": [3, 4, 54, 6]
-        },
-        "sdasdj": {
-            "plywood": ["century", "greenply", "blueply", "redply"],
-            "Blackwood": ["somewood", "Another wood", "yet another wood"]
-        },
-        "asdsaj": {
-            "aFlooring": [1, 2, 3, 4],
-            "bFlooring": [3, 4, 54, 6]
-        },
-        "dsadas": {
-            "plywood": ["century", "greenply", "blueply", "redply"],
-            "Blackwood": ["somewood", "Another wood", "yet another wood"]
-        },
-        "sadasda": {
-            "aFlooring": [1, 2, 3, 4],
-            "bFlooring": [3, 4, 54, 6]
+        catch (err) {
+            console.error(err)
+        }
+    }
+
+    // Gets the sub-categories
+    const getSubCategories = async () => {
+        try {
+            const subCategoriesData = await (await axios.get(`${PORT}/subcategories`)).data
+            setSubCategories(subCategoriesData)
+        }
+        catch (err) {
+            console.error(err)
+        }
+    }
+
+    // Gets the groups 
+    const getGroups = async () => {
+        try {
+            const groupsData = await (await axios.get(`${PORT}/groups`)).data
+            setGroups(groupsData)
+        }
+        catch (err) {
+            console.error(err)
         }
     }
 
@@ -60,23 +85,7 @@ const MegaMenu = () => {
     const wrapperRef = useRef(null);
     useOutsideAlerter(wrapperRef);
 
-    // Controls the visibility of the categories menu
-    // By default, the menu is not shown
-    const [showNavItem, setShowNavItem] = useState(false)
-
-    // Stores the Navbar title. For eg. Wood. 
-    // Responsible for controlling the categories for the menu
-    // Defaults to the first item in the data object
-    const [activeNavItem, setActiveNavItem] = useState(Object.keys(data)[0])
-
-    const navItems = Object.keys(data)
-
-    const Triangle = () => {
-        return (
-            <div style={{ width: 0, height: 0, borderTop: '10px solid transparent', borderBottom: '10px solid transparent', borderRight: '10px solid #F2F2F2' }}>
-            </div>
-        )
-    }
+    const Triangle = () => <div style={{ width: 0, height: 0, borderTop: '10px solid transparent', borderBottom: '10px solid transparent', borderRight: '10px solid #F2F2F2' }}></div>
 
     const NavItem = (props) => {
         const [isShowed, setIsShowed] = useState(false)
@@ -84,7 +93,7 @@ const MegaMenu = () => {
         const mouseOverAction = () => {
             setShowNavItem(true)
             setIsShowed(true)
-            setActiveNavItem(props.title)
+            setActiveCategory(props.id)
         }
 
         const navItemStyle = {
@@ -101,7 +110,7 @@ const MegaMenu = () => {
 
         return (
             <>
-                <div style={{ borderBottomWidth: isShowed ? 2 : 0, fontWeight: isShowed? 'bold' : 'inherit' , ...navItemStyle }} onMouseOver={mouseOverAction}  >
+                <div style={{ borderBottomWidth: isShowed ? 2 : 0, fontWeight: isShowed ? 'bold' : 'inherit', ...navItemStyle }} onMouseOver={mouseOverAction}  >
                     {props.title}
                 </div>
             </>
@@ -109,21 +118,21 @@ const MegaMenu = () => {
     }
 
     const MiniMenu = (props) => {
-        // Array of keys for the selected category. 
-        // For eg. => Selected catgeory = wood, miniMenuData = [plywood, blackwood]
-        let miniMenuData = Object.keys(data[props.title])
 
-        // The selected sub category for the selected category
-        // For eg. plywood
-        const [activeView, setActiveView] = useState(Object.keys(data[activeNavItem])[0])
+        // Creates an array of objects of subcategories which are the part of the selected category
+        let subCatData = subCategories.filter(subCat => subCat.Category === activeCategory)
+
+        // States to manage selected sub category. Initialised with the first sub category
+        const [activeSubCat, setActiveSubCat] = useState(Object(subCategories[0])._id)
 
         const MiniMenuStyle = {
             containerStyle: {
                 minHeight: 250,
-                width: isMobileOrTablet? '90%': 350,
+                width: isMobileOrTablet ? '90%' : 350,
                 position: 'absolute',
                 display: showNavItem ? 'flex' : 'none',
-                boxShadow: '0px 5px 10px 1px rgba(0,0,0,0.39)'
+                boxShadow: '0px 5px 10px 1px rgba(0,0,0,0.39)',
+                zIndex: 999999999999999
             }
         }
 
@@ -149,9 +158,9 @@ const MegaMenu = () => {
             }
 
             return <div style={subCategoryStyle.containerStyle}>
-                {miniMenuData.map(item => <div key={item} style={{ ...subCategoryStyle.itemStyle }} onMouseOver={() => setActiveView(item)}>
-                    <div style={{ fontWeight: activeView === item ? 'bold' : 'inherit' }}>{item}</div>
-                    {activeView === item ? <Triangle /> : null}
+                {subCatData.map(subCat => <div key={subCat._id} style={{ ...subCategoryStyle.itemStyle }} onMouseOver={() => setActiveSubCat(subCat._id)}>
+                    <div style={{ fontWeight: activeSubCat === subCat._id ? 'bold' : 'inherit' }}>{subCat.Sub_Category_name}</div>
+                    {activeSubCat === subCat._id ? <Triangle /> : null}
                 </div>
                 )}
             </div>
@@ -168,10 +177,13 @@ const MegaMenu = () => {
                     padding: 5
                 }
             }
-            let title = data[props.title][activeView]
+
+            // Creates an array of objects of groups which are the part of the selected category as well as the selected sub category
+            let groupData = groups.filter(group => group.Category === activeCategory && group.Sub_Category === activeSubCat)
+
             return (
                 <div style={nestedCategoryStyle.container}>
-                    {title.map(item => <div style={{ cursor: 'pointer', padding: 3, userSelect: 'none' }} key={item}>{item}</div>)}
+                    {groupData.map(group => <div style={{ cursor: 'pointer', padding: 3, userSelect: 'none' }} key={group._id}>{group.Group_name}</div>)}
                 </div>
             )
         }
@@ -200,12 +212,11 @@ const MegaMenu = () => {
     }
 
     return (
-        <div>
+        <div style={{paddingLeft:10}}>
             <div style={{ ...navBarStyle.container, overflowX: 'auto' }}>
-                {navItems.map(item => <NavItem key={item} title={item} />)
-                }
+                {categories.map(category => <NavItem key={category._id} id={category._id} image={category.category_image} title={category.name} />)}
             </div>
-            <MiniMenu title={activeNavItem} />
+            <MiniMenu title={activeCategory} />
         </div>
     )
 }

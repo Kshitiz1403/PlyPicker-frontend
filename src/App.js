@@ -1,13 +1,16 @@
+import "./App.css";
+import HomePage from "./HomePage/HomePage";
+import ProductDetails from "./ProductDetails/ProductDetails";
+import ProductPage from "./ProductPage/ProductPage";
 
-import Home from './Home';
-import Products from './core/Products';
-
+export const PORT = 'http://localhost:5000/api'
 function App() {
   return (
-    <div className="App">
-      {/* <Products /> */}
-      <Home/>
-    </div>
+    <>
+      <HomePage />
+      {/* <ProductPage /> */}
+      {/* <ProductDetails /> */}
+    </>
   );
 }
 
