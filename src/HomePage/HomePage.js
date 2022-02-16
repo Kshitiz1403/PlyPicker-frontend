@@ -9,7 +9,7 @@ import MegaMenu from "./MegaMenu/MegaMenu";
 function HomePage() {
   return (
     <>
-      <MegaMenu/>
+      <MegaMenu />
       <CarouselComponent />
       <Banner />
       <EveryoneEyeing />

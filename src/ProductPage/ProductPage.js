@@ -7,25 +7,35 @@ import { PORT } from "../App";
 import axios from "axios";
 
 function ProductPage() {
-
   useEffect(() => {
-    getData()
-  }, [])
-
+    getData();
+  }, []);
 
   const getData = async () => {
-    const productData = await (await axios.get(`${PORT}/products`)).data
-    console.log(productData)
-    setItems(productData)
-  }
+    const productData = await (await axios.get(`${PORT}/products`)).data;
+    console.log(productData);
+    setItems(productData);
+  };
 
   // Slider Filter
+
+  // Double Slider
   const [value, setValue] = useState([10000, 20000]);
   const changeValue = (event, value) => {
     setValue(value);
   };
 
   const getText = (value) => `${value}`;
+
+  // Single slider
+
+  const [singlevalue, setSingleValue] = useState(1000);
+
+  const handleValue = (e, newValue) => {
+    setSingleValue(newValue);
+  };
+
+  const getNewText = (newValue) => `${newValue}`;
 
   // //////////////////////////////////
   const [items, setItems] = useState(product_card.slice(0, 50));
@@ -61,7 +71,12 @@ function ProductPage() {
         <div className="productpage_product_info">
           <h2 className="productpage_product_heading">{item.Product_Name}</h2>
           <h3 className="productpage_product_code">{item.product_code}</h3>
-          <p className="productpage_product_description">{`${item.Product_Description}`.length> MAX_DESCR_LENGTH? `${item.Product_Description}`.substring(0,MAX_DESCR_LENGTH)+'...': `${item.Product_Description}`}</p>
+          <p className="productpage_product_description">
+            {`${item.Product_Description}`.length > MAX_DESCR_LENGTH
+              ? `${item.Product_Description}`.substring(0, MAX_DESCR_LENGTH) +
+                "..."
+              : `${item.Product_Description}`}
+          </p>
           <p className="productpage_product_price">
             <span>{item.product_currency}</span>
             {item.Product_Price}
@@ -152,6 +167,20 @@ function ProductPage() {
                           max={30000}
                           defaultValue={1000}
                           getAriaValueText={getText}
+                          valueLabelDisplay="auto"
+                        />
+                      </li>
+
+                      <li className="nav-item">
+                        {/* Slider Filter */}
+
+                        <Slider
+                          style={{ marginTop: 20, width: 150 }}
+                          defaultValue={singlevalue}
+                          onChange={handleValue}
+                          min={500}
+                          max={30000}
+                          getAriaValueText={getNewText}
                           valueLabelDisplay="auto"
                         />
                       </li>
