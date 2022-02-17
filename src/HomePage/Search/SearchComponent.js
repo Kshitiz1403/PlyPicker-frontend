@@ -1,5 +1,6 @@
 import axios from 'axios'
 import React, { useEffect, useState } from 'react'
+import { Link } from 'react-router-dom'
 import { PORT } from '../../App'
 
 const SearchComponent = () => {
@@ -19,7 +20,7 @@ const SearchComponent = () => {
     setValue(value)
     setSuggestions([])
   }
-  
+
   const onChangeHandler = (value) => {
     let matches = []
     if (value.length > 0) {
@@ -30,6 +31,22 @@ const SearchComponent = () => {
     }
     setSuggestions(matches)
     setValue(value)
+  }
+
+
+  const SuggestItem = ({ suggestion }) => {
+    const [activeSuggestion, setActiveSuggestion] = useState(false)
+    return (
+      <div
+        style={{ cursor: 'pointer', fontWeight: activeSuggestion ? 'bold' : 'inherit' }}
+        onMouseOver={() => setActiveSuggestion(true)}
+        onMouseLeave={() => setActiveSuggestion(false)}
+        onClick={() => suggestionHandler(suggestion.Product_Name)} >
+        <Link style={{ textDecoration: 'none', color: 'inherit' }} to={`/productdetails?${suggestion._id}`}>
+          {suggestion.Product_Name}
+        </Link>
+      </div>
+    )
   }
 
   return (
@@ -45,11 +62,7 @@ const SearchComponent = () => {
           }, 1000);
         }}
       />
-      {suggestions && suggestions.map((suggestion, i) => <div
-        style={{ cursor: 'pointer' }}
-        key={suggestion._id}
-        onClick={() => suggestionHandler(suggestion.Product_Name)} >{suggestion.Product_Name}
-      </div>)}
+      {suggestions && suggestions.map((suggestion, i) => <SuggestItem suggestion={suggestion} key={suggestion._id}/>)}
     </div>
   )
 }
