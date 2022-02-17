@@ -1,12 +1,13 @@
 import axios from 'axios'
 import React, { useEffect, useState, useRef } from 'react'
 import { useMediaQuery } from 'react-responsive'
+import { Link } from 'react-router-dom'
 import { PORT } from '../../App'
 
 const MegaMenu = () => {
 
     const isMobileOrTablet = useMediaQuery({
-        query:'(max-width:768px)'
+        query: '(max-width:768px)'
     })
 
     // Performs all network requests for categories, subcategories and grops
@@ -117,108 +118,121 @@ const MegaMenu = () => {
         )
     }
 
-    const MiniMenu = (props) => {
+const MiniMenu = (props) => {
 
-        // Creates an array of objects of subcategories which are the part of the selected category
-        let subCatData = subCategories.filter(subCat => subCat.Category === activeCategory)
+    // Creates an array of objects of subcategories which are the part of the selected category
+    let subCatData = subCategories.filter(subCat => subCat.Category === activeCategory)
 
-        // States to manage selected sub category. Initialised with the first sub category
-        const [activeSubCat, setActiveSubCat] = useState(Object(subCategories[0])._id)
+    // States to manage selected sub category. Initialised with the first sub category
+    const [activeSubCat, setActiveSubCat] = useState(Object(subCategories[0])._id)
 
-        const MiniMenuStyle = {
+    const MiniMenuStyle = {
+        containerStyle: {
+            minHeight: 250,
+            width: isMobileOrTablet ? '90%' : 350,
+            position: 'absolute',
+            display: showNavItem ? 'flex' : 'none',
+            boxShadow: '0px 5px 10px 1px rgba(0,0,0,0.39)',
+            zIndex: 999999999999999
+        }
+    }
+
+    const SubCategoryMenu = () => {
+        const subCategoryStyle = {
             containerStyle: {
-                minHeight: 250,
-                width: isMobileOrTablet ? '90%' : 350,
-                position: 'absolute',
-                display: showNavItem ? 'flex' : 'none',
-                boxShadow: '0px 5px 10px 1px rgba(0,0,0,0.39)',
-                zIndex: 999999999999999
+                display: 'flex',
+                flexDirection: 'column',
+                minWidth: "50%",
+                backgroundColor: 'white',
+                paddingLeft: 5,
+            },
+            itemStyle: {
+                display: 'flex',
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+                cursor: 'pointer',
+                paddingTop: 3,
+                paddingBottom: 3,
+                paddingLeft: 3,
+                userSelect: 'none'
             }
         }
 
-        const SubCategoryMenu = () => {
-            const subCategoryStyle = {
-                containerStyle: {
-                    display: 'flex',
-                    flexDirection: 'column',
-                    minWidth: "50%",
-                    backgroundColor: 'white',
-                    paddingLeft: 5,
-                },
-                itemStyle: {
-                    display: 'flex',
-                    flexDirection: 'row',
-                    justifyContent: 'space-between',
-                    cursor: 'pointer',
-                    paddingTop: 3,
-                    paddingBottom: 3,
-                    paddingLeft: 3,
-                    userSelect: 'none'
-                }
-            }
+        return <div style={subCategoryStyle.containerStyle}>
+            {subCatData.map(subCat => <Link style={{ textDecoration: 'none', color: 'inherit' }} key={subCat._id} to={`/products?category=${activeCategory}&subcategory=${activeSubCat}`}><div key={subCat._id}
+                style={{ ...subCategoryStyle.itemStyle }} onMouseOver={() => setActiveSubCat(subCat._id)}>
+                <div style={{ fontWeight: activeSubCat === subCat._id ? 'bold' : 'inherit' }}>{subCat.Sub_Category_name}</div>
+                {activeSubCat === subCat._id ? <Triangle /> : null}
+            </div></Link>
+            )}
+        </div>
+    }
 
-            return <div style={subCategoryStyle.containerStyle}>
-                {subCatData.map(subCat => <div key={subCat._id} style={{ ...subCategoryStyle.itemStyle }} onMouseOver={() => setActiveSubCat(subCat._id)}>
-                    <div style={{ fontWeight: activeSubCat === subCat._id ? 'bold' : 'inherit' }}>{subCat.Sub_Category_name}</div>
-                    {activeSubCat === subCat._id ? <Triangle /> : null}
-                </div>
-                )}
-            </div>
+
+    const GroupMenu = () => {
+        const nestedCategoryStyle = {
+            container: {
+                display: 'flex',
+                flexDirection: 'column',
+                backgroundColor: '#F2F2F2',
+                minWidth: "50%",
+                padding: 5
+            }
         }
 
+        // Creates an array of objects of groups which are the part of the selected category as well as the selected sub category
+        let groupData = groups.filter(group => group.Category === activeCategory && group.Sub_Category === activeSubCat)
 
-        const GroupMenu = () => {
-            const nestedCategoryStyle = {
-                container: {
-                    display: 'flex',
-                    flexDirection: 'column',
-                    backgroundColor: '#F2F2F2',
-                    minWidth: "50%",
-                    padding: 5
-                }
-            }
-
-            // Creates an array of objects of groups which are the part of the selected category as well as the selected sub category
-            let groupData = groups.filter(group => group.Category === activeCategory && group.Sub_Category === activeSubCat)
-
+        const GroupItem = (props) => {
+            const [isGroupItemVisible, setIsGroupItemVisible] = useState(false)
             return (
-                <div style={nestedCategoryStyle.container}>
-                    {groupData.map(group => <div style={{ cursor: 'pointer', padding: 3, userSelect: 'none' }} key={group._id}>{group.Group_name}</div>)}
-                </div>
+                <Link key={props._id}
+                    style={{ textDecoration: 'none', color: 'inherit' }}
+                    to={`/products?category=${activeCategory}&subcategory=${activeSubCat}&group=${props._id}`}>
+                    <div onMouseOver={() => setIsGroupItemVisible(true)} onMouseLeave={() => setIsGroupItemVisible(false)} style={{ cursor: 'pointer', padding: 3, userSelect: 'none', fontWeight: isGroupItemVisible ? 'bold' : 'inherit' }} key={props._id}>{props.Group_name}</div>
+                </Link>
             )
         }
 
         return (
-            <div style={{ ...MiniMenuStyle.containerStyle, }} ref={wrapperRef}>
-                <SubCategoryMenu />
-                <GroupMenu />
+            <div style={nestedCategoryStyle.container}>
+                {groupData.map(group => <GroupItem _id={group._id} Group_name={group.Group_name} />)}
             </div>
         )
     }
 
-    const navBarStyle = {
-        container: {
-            height: 50,
-            display: 'flex',
-            flexDirection: 'row',
-            alignItems: 'center',
-            borderStyle: 'solid',
-            borderTopWidth: 0,
-            borderLeftWidth: 0,
-            borderRightWidth: 0,
-            borderBottomWidth: 0.5,
-            borderColor: '#F2F2F2'
-        }
-    }
-
     return (
-        <div style={{paddingLeft:10}}>
-            <div style={{ ...navBarStyle.container, overflowX: 'auto' }}>
-                {categories.map(category => <NavItem key={category._id} id={category._id} image={category.category_image} title={category.name} />)}
-            </div>
-            <MiniMenu title={activeCategory} />
+        <div style={{ ...MiniMenuStyle.containerStyle, }} ref={wrapperRef}>
+            <SubCategoryMenu />
+            <GroupMenu />
         </div>
     )
+}
+
+const navBarStyle = {
+    container: {
+        height: 50,
+        display: 'flex',
+        flexDirection: 'row',
+        alignItems: 'center',
+        borderStyle: 'solid',
+        borderTopWidth: 0,
+        borderLeftWidth: 0,
+        borderRightWidth: 0,
+        borderBottomWidth: 0.5,
+        borderColor: '#F2F2F2'
+    }
+}
+
+return (
+    <div style={{ paddingLeft: 10 }}>
+        <div style={{ ...navBarStyle.container, overflowX: 'auto' }}>
+            {categories.map(category =><Link key={category._id} style={{ textDecoration: 'none', color: 'inherit' }} to={`/products?category=${activeCategory}`}>
+                <NavItem key={category._id} id={category._id} image={category.category_image} title={category.name} /></Link>)}
+        </div>
+        <MiniMenu title={activeCategory} />
+    </div>
+)
 }
 
 export default MegaMenu

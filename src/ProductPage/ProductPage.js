@@ -5,15 +5,62 @@ import ReactPaginate from "react-paginate";
 import Slider from "@mui/material/Slider";
 import { PORT } from "../App";
 import axios from "axios";
+import { useSearchParams } from "react-router-dom";
 
 function ProductPage() {
+
+
+  const [searchParams, setSearchParams] = useSearchParams()
+
   useEffect(() => {
     getData();
   }, []);
 
+// useEffect(() => {
+//   console.log(query)
+// }, [query])
+
+// useEffect(() => {
+//   updateQuery()
+// }, [params])
+
+
+const [queryS, setQueryS] = useState('')
+
+
+  let CATEGORY_SEARCH_PARAM
+  let SUBCATEGORY_SEARCH_PARAM
+  let GROUP_SEARCH_PARAM
+
+
+  let params = {}
+
+  if (searchParams.get('category')) {
+    CATEGORY_SEARCH_PARAM = searchParams.get("category")
+    params.category = CATEGORY_SEARCH_PARAM
+  }
+  if (searchParams.get('subcategory')) {
+    SUBCATEGORY_SEARCH_PARAM = searchParams.get("subcategory")
+    params.subcategory = SUBCATEGORY_SEARCH_PARAM
+  }
+  if (searchParams.get('group')) {
+    GROUP_SEARCH_PARAM = searchParams.get("group")
+    params.group = GROUP_SEARCH_PARAM
+  }
+
+  var esc = encodeURIComponent
+  let query = Object.keys(params).map(k => esc(k) + '=' + esc(params[k])).join('&')
+  // setQueryS(query)
+
+  // const updateQuery = () =>{
+
+  //   let q = Object.keys(params).map(k => esc(k) + '=' + esc(params[k])).join('&')
+  //   setQueryS(q)
+
+  // }
+
   const getData = async () => {
-    const productData = await (await axios.get(`${PORT}/products`)).data;
-    console.log(productData);
+    const productData = await (await axios.get(`${PORT}/products?${query}`)).data;
     setItems(productData);
   };
 
@@ -23,6 +70,9 @@ function ProductPage() {
   const [value, setValue] = useState([10000, 20000]);
   const changeValue = (event, value) => {
     setValue(value);
+    params.max = Math.max(...value)
+    params.min = Math.min(...value)
+    console.log(params)
   };
 
   const getText = (value) => `${value}`;
@@ -72,10 +122,17 @@ function ProductPage() {
           <h2 className="productpage_product_heading">{item.Product_Name}</h2>
           <h3 className="productpage_product_code">{item.product_code}</h3>
           <p className="productpage_product_description">
-            {`${item.Product_Description}`.length > MAX_DESCR_LENGTH
-              ? `${item.Product_Description}`.substring(0, MAX_DESCR_LENGTH) +
+            {/* Renders description only if description field exists */}
+            {item.Product_Description ?
+              // Keeps the description limited to MAX_DESCR_LENGTH
+              `${item.Product_Description}`.length > MAX_DESCR_LENGTH
+                ?
+                `${item.Product_Description}`.substring(0, MAX_DESCR_LENGTH) +
                 "..."
-              : `${item.Product_Description}`}
+                :
+                `${item.Product_Description}`
+              : null
+            }
           </p>
           <p className="productpage_product_price">
             <span>{item.product_currency}</span>
