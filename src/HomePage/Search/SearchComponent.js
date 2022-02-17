@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom'
 import { PORT } from '../../App'
 
 const SearchComponent = () => {
-  const [value, setValue] = useState('')
+  const [searchValue, setSearchValue] = useState('')
   const [products, setProducts] = useState([])
   const [suggestions, setSuggestions] = useState([])
 
@@ -17,7 +17,7 @@ const SearchComponent = () => {
   }, [])
 
   const suggestionHandler = (value) => {
-    setValue(value)
+    setSearchValue(value)
     setSuggestions([])
   }
 
@@ -30,7 +30,7 @@ const SearchComponent = () => {
       })
     }
     setSuggestions(matches)
-    setValue(value)
+    setSearchValue(value)
   }
 
 
@@ -42,7 +42,7 @@ const SearchComponent = () => {
         onMouseOver={() => setActiveSuggestion(true)}
         onMouseLeave={() => setActiveSuggestion(false)}
         onClick={() => suggestionHandler(suggestion.Product_Name)} >
-        <Link style={{ textDecoration: 'none', color: 'inherit' }} to={`/productdetails?${suggestion._id}`}>
+        <Link style={{ textDecoration: 'none', color: 'inherit' }} to={`/productdetails/${suggestion._id}`}>
           {suggestion.Product_Name}
         </Link>
       </div>
@@ -55,7 +55,7 @@ const SearchComponent = () => {
         placeholder="Enter Post Title"
         type="text"
         onChange={event => onChangeHandler(event.target.value)}
-        value={value}
+        value={searchValue}
         onBlur={() => {
           setTimeout(() => {
             setSuggestions([])
