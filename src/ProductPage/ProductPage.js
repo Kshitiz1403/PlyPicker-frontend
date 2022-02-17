@@ -163,7 +163,7 @@ function ProductPage() {
     .filter(item => item.Product_Price >= Math.min(...value) && item.Product_Price <= Math.max(...value))
     .map((item) => (
       <div className="productpage_card" key={item._id}>
-        <Link to={`/productdetails?${item._id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+        <Link to={`/productdetails/${item._id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
           <div className="productpage_card_img">
             <img src={item.Product_Image} alt={item.Product_Name} />
           </div>
