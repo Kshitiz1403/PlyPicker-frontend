@@ -8,9 +8,7 @@ import axios from "axios";
 import { Link, useSearchParams } from "react-router-dom";
 
 function ProductPage() {
-
-
-  const [searchParams, setSearchParams] = useSearchParams()
+  const [searchParams, setSearchParams] = useSearchParams();
 
   useEffect(() => {
     getData();
@@ -24,32 +22,31 @@ function ProductPage() {
   //   updateQuery()
   // }, [params])
 
+  const [queryS, setQueryS] = useState("");
 
-  const [queryS, setQueryS] = useState('')
+  let CATEGORY_SEARCH_PARAM;
+  let SUBCATEGORY_SEARCH_PARAM;
+  let GROUP_SEARCH_PARAM;
 
+  let params = {};
 
-  let CATEGORY_SEARCH_PARAM
-  let SUBCATEGORY_SEARCH_PARAM
-  let GROUP_SEARCH_PARAM
-
-
-  let params = {}
-
-  if (searchParams.get('category')) {
-    CATEGORY_SEARCH_PARAM = searchParams.get("category")
-    params.category = CATEGORY_SEARCH_PARAM
+  if (searchParams.get("category")) {
+    CATEGORY_SEARCH_PARAM = searchParams.get("category");
+    params.category = CATEGORY_SEARCH_PARAM;
   }
-  if (searchParams.get('subcategory')) {
-    SUBCATEGORY_SEARCH_PARAM = searchParams.get("subcategory")
-    params.subcategory = SUBCATEGORY_SEARCH_PARAM
+  if (searchParams.get("subcategory")) {
+    SUBCATEGORY_SEARCH_PARAM = searchParams.get("subcategory");
+    params.subcategory = SUBCATEGORY_SEARCH_PARAM;
   }
-  if (searchParams.get('group')) {
-    GROUP_SEARCH_PARAM = searchParams.get("group")
-    params.group = GROUP_SEARCH_PARAM
+  if (searchParams.get("group")) {
+    GROUP_SEARCH_PARAM = searchParams.get("group");
+    params.group = GROUP_SEARCH_PARAM;
   }
 
-  var esc = encodeURIComponent
-  let query = Object.keys(params).map(k => esc(k) + '=' + esc(params[k])).join('&')
+  var esc = encodeURIComponent;
+  let query = Object.keys(params)
+    .map((k) => esc(k) + "=" + esc(params[k]))
+    .join("&");
   // setQueryS(query)
 
   // const updateQuery = () =>{
@@ -60,38 +57,40 @@ function ProductPage() {
   // }
 
   const getData = async () => {
-    const productData = await (await axios.get(`${PORT}/products?${query}`)).data;
+    const productData = await (
+      await axios.get(`${PORT}/products?${query}`)
+    ).data;
     setItems(productData);
     setProducts(productData);
-    let maxi = getMax(productData)
-    let mini = getMin(productData)
-    setValue([mini, maxi])
+    let maxi = getMax(productData);
+    let mini = getMin(productData);
+    setValue([mini, maxi]);
   };
 
   const getMax = (productData) => {
-    let maxi = 0
-    productData.map(item => {
-      maxi = Math.max(maxi, item.Product_Price)
-    })
-    setMaxPrice(maxi)
-    return maxi
-  }
+    let maxi = 0;
+    productData.map((item) => {
+      maxi = Math.max(maxi, item.Product_Price);
+    });
+    setMaxPrice(maxi);
+    return maxi;
+  };
 
   const getMin = (productData) => {
-    let mini = Number.MAX_SAFE_INTEGER
-    productData.map(item => {
-      mini = Math.min(mini, item.Product_Price)
-    })
-    setMinPrice(mini)
-    return mini
-  }
+    let mini = Number.MAX_SAFE_INTEGER;
+    productData.map((item) => {
+      mini = Math.min(mini, item.Product_Price);
+    });
+    setMinPrice(mini);
+    return mini;
+  };
 
   // Slider Filter
 
   // Double Slider
   const [value, setValue] = useState([0, 1000]);
   const changeValue = (event, value) => {
-    setValue(value)
+    setValue(value);
   };
 
   const getText = (value) => `${value}`;
@@ -107,35 +106,34 @@ function ProductPage() {
   const getNewText = (newValue) => `${newValue}`;
 
   // //////////////////////////////////
-  const [maxPrice, setMaxPrice] = useState(0)
-  const [minPrice, setMinPrice] = useState(0)
+  const [maxPrice, setMaxPrice] = useState(0);
+  const [minPrice, setMinPrice] = useState(0);
 
   // Stores the array of products and responsible for rendering
   const [items, setItems] = useState([]);
   // Stores a copy of array of products for immutability
-  const [products, setProducts] = useState([])
-  const [activeSortingStatus, setActiveSortingStatus] = useState('')
+  const [products, setProducts] = useState([]);
+  const [activeSortingStatus, setActiveSortingStatus] = useState("");
 
   const sortHandler = (productsArray, order, isChecked) => {
     // order => -1 => descending
     // +1 => ascending
 
     if (!isChecked) {
-      return setItems(products)
+      return setItems(products);
     }
 
-    let arr = [...productsArray]
+    let arr = [...productsArray];
     if (order === 1) {
-
-      arr.sort((a, b) => a.Product_Price - b.Product_Price)
-      setActiveSortingStatus('asc')
+      arr.sort((a, b) => a.Product_Price - b.Product_Price);
+      setActiveSortingStatus("asc");
     }
     if (order === -1) {
-      arr.sort((a, b) => b.Product_Price - a.Product_Price)
-      setActiveSortingStatus('des')
+      arr.sort((a, b) => b.Product_Price - a.Product_Price);
+      setActiveSortingStatus("des");
     }
-    setItems(arr)
-  }
+    setItems(arr);
+  };
 
   // PAGINATION
   const [pageNumber, setPageNumber] = useState(0);
@@ -160,10 +158,17 @@ function ProductPage() {
   // passing product data via props
   const listItems = items
     .slice(pagesVisited, pagesVisited + usersPerPage)
-    .filter(item => item.Product_Price >= Math.min(...value) && item.Product_Price <= Math.max(...value))
+    .filter(
+      (item) =>
+        item.Product_Price >= Math.min(...value) &&
+        item.Product_Price <= Math.max(...value)
+    )
     .map((item) => (
       <div className="productpage_card" key={item._id}>
-        <Link to={`/productdetails/${item._id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+        <Link
+          to={`/productdetails/${item._id}`}
+          style={{ textDecoration: "none", color: "inherit" }}
+        >
           <div className="productpage_card_img">
             <img src={item.Product_Image} alt={item.Product_Name} />
           </div>
@@ -172,16 +177,15 @@ function ProductPage() {
             <h3 className="productpage_product_code">{item.product_code}</h3>
             <p className="productpage_product_description">
               {/* Renders description only if description field exists */}
-              {item.Product_Description ?
-                // Keeps the description limited to MAX_DESCR_LENGTH
-                `${item.Product_Description}`.length > MAX_DESCR_LENGTH
-                  ?
-                  `${item.Product_Description}`.substring(0, MAX_DESCR_LENGTH) +
-                  "..."
-                  :
-                  `${item.Product_Description}`
-                : null
-              }
+              {item.Product_Description
+                ? // Keeps the description limited to MAX_DESCR_LENGTH
+                  `${item.Product_Description}`.length > MAX_DESCR_LENGTH
+                  ? `${item.Product_Description}`.substring(
+                      0,
+                      MAX_DESCR_LENGTH
+                    ) + "..."
+                  : `${item.Product_Description}`
+                : null}
             </p>
             <p className="productpage_product_price">
               <span>{item.product_currency}</span>
@@ -222,13 +226,14 @@ function ProductPage() {
                             className="form-check-input"
                             type="checkbox"
                             id="sortAsc"
-                            checked={activeSortingStatus == 'asc' ? true : false}
-                            onChange={(event) => sortHandler(items, 1, event.target.checked)}
+                            checked={
+                              activeSortingStatus == "asc" ? true : false
+                            }
+                            onChange={(event) =>
+                              sortHandler(items, 1, event.target.checked)
+                            }
                           />
-                          <label
-                            className="form-check-label"
-                            htmlFor="sortAsc"
-                          >
+                          <label className="form-check-label" htmlFor="sortAsc">
                             Lowest Priced First
                           </label>
                         </div>
@@ -239,8 +244,12 @@ function ProductPage() {
                             className="form-check-input"
                             type="checkbox"
                             id="sortDesc"
-                            checked={activeSortingStatus == 'des' ? true : false}
-                            onChange={(event) => sortHandler(items, -1, event.target.checked)}
+                            checked={
+                              activeSortingStatus == "des" ? true : false
+                            }
+                            onChange={(event) =>
+                              sortHandler(items, -1, event.target.checked)
+                            }
                           />
                           <label
                             className="form-check-label"
@@ -264,7 +273,6 @@ function ProductPage() {
                           valueLabelDisplay="auto"
                         />
                       </li>
-
                       {/* <li className="nav-item">
                         // Slider Filter
 
