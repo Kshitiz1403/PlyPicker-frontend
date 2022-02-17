@@ -145,7 +145,7 @@ function ProductPage() {
   const pagesVisited = pageNumber * usersPerPage;
 
   // Deciding number of pages
-  const pageCount = Math.ceil(items.length / usersPerPage);
+  var pageCount = Math.ceil(items.length / usersPerPage);
 
   // Changing page function
   const changePage = ({ selected }) => {
@@ -157,12 +157,12 @@ function ProductPage() {
 
   // passing product data via props
   const listItems = items
-    .slice(pagesVisited, pagesVisited + usersPerPage)
     .filter(
       (item) =>
         item.Product_Price >= Math.min(...value) &&
         item.Product_Price <= Math.max(...value)
     )
+    .slice(pagesVisited, pagesVisited + usersPerPage)
     .map((item) => (
       <div className="productpage_card" key={item._id}>
         <Link
@@ -195,6 +195,27 @@ function ProductPage() {
         </Link>
       </div>
     ));
+
+    // update page count
+    pageCount = Math.ceil(items.filter(item => item.Product_Price >= Math.min(...value) && item.Product_Price <= Math.max(...value)).length / usersPerPage);
+
+    var paginationBar = <div></div>
+    if (pageCount > 0) {
+      paginationBar = 
+      <ReactPaginate
+      previousLabel={"Previous"}
+      nextLabel={"Next"}
+      pageCount={pageCount}
+      onPageChange={changePage}
+      containerClassName={"paginationBttns"}
+      previousLinkClassName={"previousBttn"}
+      nextLinkClassName={"nextBttn"}
+      disabledClassName={"paginationDisabled"}
+      activeClassName={"paginationActive"}
+    />
+    } else {
+      paginationBar = <div></div>
+    }
 
   return (
     <>
@@ -294,17 +315,7 @@ function ProductPage() {
           </div>
           <div className="productpage_rightside">
             {listItems}
-            <ReactPaginate
-              previousLabel={"Previous"}
-              nextLabel={"Next"}
-              pageCount={pageCount}
-              onPageChange={changePage}
-              containerClassName={"paginationBttns"}
-              previousLinkClassName={"previousBttn"}
-              nextLinkClassName={"nextBttn"}
-              disabledClassName={"paginationDisabled"}
-              activeClassName={"paginationActive"}
-            />
+            {paginationBar}
           </div>
         </div>
       </div>
