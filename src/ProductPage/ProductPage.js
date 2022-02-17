@@ -5,7 +5,7 @@ import ReactPaginate from "react-paginate";
 import Slider from "@mui/material/Slider";
 import { PORT } from "../App";
 import axios from "axios";
-import { useSearchParams } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 
 function ProductPage() {
 
@@ -16,16 +16,16 @@ function ProductPage() {
     getData();
   }, []);
 
-// useEffect(() => {
-//   console.log(query)
-// }, [query])
+  // useEffect(() => {
+  //   console.log(query)
+  // }, [query])
 
-// useEffect(() => {
-//   updateQuery()
-// }, [params])
+  // useEffect(() => {
+  //   updateQuery()
+  // }, [params])
 
 
-const [queryS, setQueryS] = useState('')
+  const [queryS, setQueryS] = useState('')
 
 
   let CATEGORY_SEARCH_PARAM
@@ -62,17 +62,36 @@ const [queryS, setQueryS] = useState('')
   const getData = async () => {
     const productData = await (await axios.get(`${PORT}/products?${query}`)).data;
     setItems(productData);
+    setProducts(productData);
+    let maxi = getMax(productData)
+    let mini = getMin(productData)
+    setValue([mini, maxi])
   };
+
+  const getMax = (productData) => {
+    let maxi = 0
+    productData.map(item => {
+      maxi = Math.max(maxi, item.Product_Price)
+    })
+    setMaxPrice(maxi)
+    return maxi
+  }
+
+  const getMin = (productData) => {
+    let mini = Number.MAX_SAFE_INTEGER
+    productData.map(item => {
+      mini = Math.min(mini, item.Product_Price)
+    })
+    setMinPrice(mini)
+    return mini
+  }
 
   // Slider Filter
 
   // Double Slider
-  const [value, setValue] = useState([10000, 20000]);
+  const [value, setValue] = useState([0, 1000]);
   const changeValue = (event, value) => {
-    setValue(value);
-    params.max = Math.max(...value)
-    params.min = Math.min(...value)
-    console.log(params)
+    setValue(value)
   };
 
   const getText = (value) => `${value}`;
@@ -88,7 +107,35 @@ const [queryS, setQueryS] = useState('')
   const getNewText = (newValue) => `${newValue}`;
 
   // //////////////////////////////////
-  const [items, setItems] = useState(product_card.slice(0, 50));
+  const [maxPrice, setMaxPrice] = useState(0)
+  const [minPrice, setMinPrice] = useState(0)
+
+  // Stores the array of products and responsible for rendering
+  const [items, setItems] = useState([]);
+  // Stores a copy of array of products for immutability
+  const [products, setProducts] = useState([])
+  const [activeSortingStatus, setActiveSortingStatus] = useState('')
+
+  const sortHandler = (productsArray, order, isChecked) => {
+    // order => -1 => descending
+    // +1 => ascending
+
+    if (!isChecked) {
+      return setItems(products)
+    }
+
+    let arr = [...productsArray]
+    if (order === 1) {
+
+      arr.sort((a, b) => a.Product_Price - b.Product_Price)
+      setActiveSortingStatus('asc')
+    }
+    if (order === -1) {
+      arr.sort((a, b) => b.Product_Price - a.Product_Price)
+      setActiveSortingStatus('des')
+    }
+    setItems(arr)
+  }
 
   // PAGINATION
   const [pageNumber, setPageNumber] = useState(0);
@@ -113,32 +160,35 @@ const [queryS, setQueryS] = useState('')
   // passing product data via props
   const listItems = items
     .slice(pagesVisited, pagesVisited + usersPerPage)
+    .filter(item => item.Product_Price >= Math.min(...value) && item.Product_Price <= Math.max(...value))
     .map((item) => (
       <div className="productpage_card" key={item._id}>
-        <div className="productpage_card_img">
-          <img src={item.Product_Image} alt={item.Product_Name} />
-        </div>
-        <div className="productpage_product_info">
-          <h2 className="productpage_product_heading">{item.Product_Name}</h2>
-          <h3 className="productpage_product_code">{item.product_code}</h3>
-          <p className="productpage_product_description">
-            {/* Renders description only if description field exists */}
-            {item.Product_Description ?
-              // Keeps the description limited to MAX_DESCR_LENGTH
-              `${item.Product_Description}`.length > MAX_DESCR_LENGTH
-                ?
-                `${item.Product_Description}`.substring(0, MAX_DESCR_LENGTH) +
-                "..."
-                :
-                `${item.Product_Description}`
-              : null
-            }
-          </p>
-          <p className="productpage_product_price">
-            <span>{item.product_currency}</span>
-            {item.Product_Price}
-          </p>
-        </div>
+        <Link to={`/productdetails?${item._id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+          <div className="productpage_card_img">
+            <img src={item.Product_Image} alt={item.Product_Name} />
+          </div>
+          <div className="productpage_product_info">
+            <h2 className="productpage_product_heading">{item.Product_Name}</h2>
+            <h3 className="productpage_product_code">{item.product_code}</h3>
+            <p className="productpage_product_description">
+              {/* Renders description only if description field exists */}
+              {item.Product_Description ?
+                // Keeps the description limited to MAX_DESCR_LENGTH
+                `${item.Product_Description}`.length > MAX_DESCR_LENGTH
+                  ?
+                  `${item.Product_Description}`.substring(0, MAX_DESCR_LENGTH) +
+                  "..."
+                  :
+                  `${item.Product_Description}`
+                : null
+              }
+            </p>
+            <p className="productpage_product_price">
+              <span>{item.product_currency}</span>
+              {item.Product_Price}
+            </p>
+          </div>
+        </Link>
       </div>
     ));
 
@@ -150,10 +200,10 @@ const [queryS, setQueryS] = useState('')
             <div className="productpage_leftside_heading">FILTERS</div>
             <div className="productpage_filters">
               {/* Checkbox Filter */}
-              <div class="navbar navbar-expand-lg navbar-light">
-                <div class="container-fluid">
+              <div className="navbar navbar-expand-lg navbar-light">
+                <div className="container-fluid">
                   <button
-                    class="navbar-toggler"
+                    className="navbar-toggler"
                     type="button"
                     data-bs-toggle="collapse"
                     data-bs-target="#navbarNav"
@@ -161,55 +211,42 @@ const [queryS, setQueryS] = useState('')
                     aria-expanded="false"
                     aria-label="Toggle navigation"
                   >
-                    <span class="navbar-toggler-icon"></span>
+                    <span className="navbar-toggler-icon"></span>
                   </button>
-                  <div class="collapse navbar-collapse " id="navbarNav">
-                    <ul class="nav flex-column">
-                      <li class="nav-item">
-                        <div class="form-check">
+                  <div className="collapse navbar-collapse " id="navbarNav">
+                    <ul className="nav flex-column">
+                      Sort By
+                      <li className="nav-item">
+                        <div className="form-check">
                           <input
-                            class="form-check-input"
+                            className="form-check-input"
                             type="checkbox"
-                            value=""
-                            id="flexCheckDefault"
+                            id="sortAsc"
+                            checked={activeSortingStatus == 'asc' ? true : false}
+                            onChange={(event) => sortHandler(items, 1, event.target.checked)}
                           />
                           <label
-                            class="form-check-label"
-                            for="flexCheckDefault"
+                            className="form-check-label"
+                            htmlFor="sortAsc"
                           >
-                            Default checkbox
+                            Lowest Priced First
                           </label>
                         </div>
                       </li>
-                      <li class="nav-item">
-                        <div class="form-check">
+                      <li className="nav-item">
+                        <div className="form-check">
                           <input
-                            class="form-check-input"
+                            className="form-check-input"
                             type="checkbox"
-                            value=""
-                            id="flexCheckDefault"
+                            id="sortDesc"
+                            checked={activeSortingStatus == 'des' ? true : false}
+                            onChange={(event) => sortHandler(items, -1, event.target.checked)}
                           />
                           <label
-                            class="form-check-label"
-                            for="flexCheckDefault"
+                            className="form-check-label"
+                            htmlFor="sortDesc"
                           >
-                            Default checkbox
-                          </label>
-                        </div>
-                      </li>
-                      <li class="nav-item">
-                        <div class="form-check">
-                          <input
-                            class="form-check-input"
-                            type="checkbox"
-                            value=""
-                            id="flexCheckDefault"
-                          />
-                          <label
-                            class="form-check-label"
-                            for="flexCheckDefault"
-                          >
-                            Default checkbox
+                            Highest Priced First
                           </label>
                         </div>
                       </li>
@@ -220,27 +257,27 @@ const [queryS, setQueryS] = useState('')
                           style={{ marginTop: 20, width: 150 }}
                           value={value}
                           onChange={changeValue}
-                          min={500}
-                          max={30000}
+                          min={minPrice}
+                          max={maxPrice}
                           defaultValue={1000}
                           getAriaValueText={getText}
                           valueLabelDisplay="auto"
                         />
                       </li>
 
-                      <li className="nav-item">
-                        {/* Slider Filter */}
+                      {/* <li className="nav-item">
+                        // Slider Filter
 
                         <Slider
                           style={{ marginTop: 20, width: 150 }}
                           defaultValue={singlevalue}
                           onChange={handleValue}
-                          min={500}
-                          max={30000}
+                          min={0}
+                          max={5009}
                           getAriaValueText={getNewText}
                           valueLabelDisplay="auto"
                         />
-                      </li>
+                      </li> */}
                     </ul>
                   </div>
                 </div>
