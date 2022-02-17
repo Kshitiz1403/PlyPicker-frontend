@@ -5,11 +5,13 @@ import CarouselComponent from "./Carousel/CarouselComponent";
 import EveryoneEyeing from "./EveryoneEyeing/EveryoneEyeing";
 import Footer from "./Footer/Footer";
 import MegaMenu from "./MegaMenu/MegaMenu";
+import SearchComponent from "./Search/SearchComponent";
 
 function HomePage() {
   return (
     <>
       <MegaMenu />
+      <SearchComponent/>
       <CarouselComponent />
       <Banner />
       <EveryoneEyeing />
