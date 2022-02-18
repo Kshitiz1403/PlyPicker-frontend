@@ -1,20 +1,21 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import "./SearchComponent.css";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { PORT } from "../../App";
 
 const SearchComponent = () => {
   const [searchValue, setSearchValue] = useState("");
-  const [products, setProducts] = useState([]);
   const [suggestions, setSuggestions] = useState([]);
+  const [groups, setGroups] = useState([])
+  const navigate = useNavigate()
 
   useEffect(() => {
-    const loadProducts = async () => {
-      const response = await axios.get(`${PORT}/products`);
-      setProducts(response.data);
+    const loadGroups = async () => {
+      const response = await axios.get(`${PORT}/groups`);
+      setGroups(response.data);
     };
-    loadProducts();
+    loadGroups()
   }, []);
 
   const suggestionHandler = (value) => {
@@ -25,9 +26,9 @@ const SearchComponent = () => {
   const onChangeHandler = (value) => {
     let matches = [];
     if (value.length > 0) {
-      matches = products.filter((product) => {
+      matches = groups.filter((group) => {
         const regex = new RegExp(`${value}`, "gi");
-        return product.Product_Name.match(regex);
+        return group.Group_name.match(regex);
       });
     }
     setSuggestions(matches);
@@ -37,23 +38,23 @@ const SearchComponent = () => {
   const SuggestItem = ({ suggestion }) => {
     const [activeSuggestion, setActiveSuggestion] = useState(false);
     return (
-      <div
-        className="searchbar_output"
-        style={{
-          cursor: "pointer",
-          fontWeight: activeSuggestion ? "bold" : "inherit",
-        }}
-        onMouseOver={() => setActiveSuggestion(true)}
-        onMouseLeave={() => setActiveSuggestion(false)}
-        onClick={() => suggestionHandler(suggestion.Product_Name)}
+      <Link
+        style={{ textDecoration: "none", color: "inherit", }}
+        to={`/products/?group=${suggestion._id}`}
       >
-        <Link
-          style={{ textDecoration: "none", color: "inherit" }}
-          to={`/productdetails/${suggestion._id}`}
+        <div
+          className="searchbar_output"
+          style={{
+            cursor: "pointer",
+            fontWeight: activeSuggestion ? "bold" : "inherit",
+          }}
+          onMouseOver={() => setActiveSuggestion(true)}
+          onMouseLeave={() => setActiveSuggestion(false)}
+          onClick={() => suggestionHandler(suggestion.Product_Name)}
         >
-          {suggestion.Product_Name}
-        </Link>
-      </div>
+          {suggestion.Group_name}
+        </div>
+      </Link>
     );
   };
 
@@ -61,9 +62,14 @@ const SearchComponent = () => {
     <div>
       <input
         className="searchbar_search"
-        placeholder="Search Product"
+        placeholder="What are you looking for?"
         type="text"
         onChange={(event) => onChangeHandler(event.target.value)}
+        onKeyPress={e => {
+          if (e.key == "Enter") {
+            navigate(`/products?name=${searchValue}`)
+          }
+        }}
         value={searchValue}
         onBlur={() => {
           setTimeout(() => {
@@ -71,10 +77,14 @@ const SearchComponent = () => {
           }, 1000);
         }}
       />
-      {suggestions &&
-        suggestions.map((suggestion, i) => (
-          <SuggestItem suggestion={suggestion} key={suggestion._id} />
-        ))}
+      <div style={{
+        position: 'absolute', zIndex: 999999, backgroundColor: 'white', minWidth: 450, boxShadow: '0px 5px 10px 0px rgba(0,0,0,0.39)', marginLeft: 20,
+      }}>
+        {suggestions &&
+          suggestions.map((suggestion) => (
+            <SuggestItem suggestion={suggestion} key={suggestion._id} />
+          ))}
+      </div>
     </div>
   );
 };

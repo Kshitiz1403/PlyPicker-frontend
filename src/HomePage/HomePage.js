@@ -10,8 +10,8 @@ import SearchComponent from "./Search/SearchComponent";
 function HomePage() {
   return (
     <>
-      <MegaMenu />
       <SearchComponent/>
+      <MegaMenu />
       <CarouselComponent />
       <Banner />
       <EveryoneEyeing />

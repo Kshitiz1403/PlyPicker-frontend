@@ -24,11 +24,17 @@ function ProductPage() {
 
   const [queryS, setQueryS] = useState("");
 
+  let NAME_SEARCH_PARAM;
   let CATEGORY_SEARCH_PARAM;
   let SUBCATEGORY_SEARCH_PARAM;
   let GROUP_SEARCH_PARAM;
 
   let params = {};
+
+  if(searchParams.get("name")){
+    NAME_SEARCH_PARAM = searchParams.get("name")
+    params.name = NAME_SEARCH_PARAM
+  }
 
   if (searchParams.get("category")) {
     CATEGORY_SEARCH_PARAM = searchParams.get("category");
