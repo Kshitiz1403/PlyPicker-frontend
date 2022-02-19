@@ -9,7 +9,7 @@ import SearchComponent from "./Search/SearchComponent";
 
 function HomePage() {
   return (
-    <>
+    <div style={{overflowX:'hidden'}}>
       <SearchComponent/>
       <MegaMenu />
       <CarouselComponent />
@@ -17,7 +17,7 @@ function HomePage() {
       <EveryoneEyeing />
       <BrandstoChoose />
       <Footer />
-    </>
+    </div>
   );
 }
 
