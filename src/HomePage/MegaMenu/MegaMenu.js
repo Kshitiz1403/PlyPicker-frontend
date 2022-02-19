@@ -71,7 +71,7 @@ const MegaMenu = () => {
 
     const getBrands = async () =>{
         try{
-            const brandsData = await (await (axios.get(`${PORT}/products?categories=${activeCategory}`))).data
+            const brandsData = await (await (axios.get(`${PORT}/products?category=${activeCategory}`))).data
             let arr = []
             brandsData.map(product => arr.push(capitalizeFirstLetter(product.Brand)))
             arr = [...new Set(arr)]
