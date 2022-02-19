@@ -9,13 +9,15 @@ import ProductPage from './ProductPage/ProductPage';
 import ProductDetails from './ProductDetails/ProductDetails';
 
 ReactDOM.render(
-  <BrowserRouter>
-    <Routes>
-      <Route path='/' element={<HomePage />} />
-      <Route path='/products' element={<ProductPage/>}/>
-      <Route path='/productdetails/:id' element={<ProductDetails/>}/>
-    </Routes>
-  </BrowserRouter>,
+  <div className='index'>
+    <BrowserRouter>
+      <Routes>
+        <Route path='/' element={<HomePage />} />
+        <Route path='/products' element={<ProductPage />} />
+        <Route path='/productdetails/:id' element={<ProductDetails />} />
+      </Routes>
+    </BrowserRouter>
+  </div>,
   document.getElementById('root')
 );
 

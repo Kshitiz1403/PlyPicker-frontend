@@ -276,9 +276,7 @@ const MiniMenu = (props) => {
     }
 
     return (
-        <div style={{fontFamily: 'Manrope, sans-serif' }}>
-            <NavBar />
-        </div>
+        <NavBar />
     )
 }
 
