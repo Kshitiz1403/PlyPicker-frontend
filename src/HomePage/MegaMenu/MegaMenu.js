@@ -1,9 +1,12 @@
 import axios from 'axios'
 import React, { useEffect, useState, useRef } from 'react'
+import { Image } from 'react-bootstrap'
 import { useMediaQuery } from 'react-responsive'
 import { Link } from 'react-router-dom'
 import { PORT } from '../../App'
 import capitalizeFirstLetter from '../../heplerFunctions/capitalizeFirstLetter'
+import SearchComponent from '../Search/SearchComponent'
+import "./MegaMenu.css"
 
 const MegaMenu = () => {
 
@@ -65,19 +68,19 @@ const MegaMenu = () => {
     }
 
     // takes category id and search for all the products in that category and maintain an array of unique brands from them.
-    useEffect(()=>{
+    useEffect(() => {
         getBrands()
     }, [activeCategory])
 
-    const getBrands = async () =>{
-        try{
+    const getBrands = async () => {
+        try {
             const brandsData = await (await (axios.get(`${PORT}/products?category=${activeCategory}`))).data
             let arr = []
             brandsData.map(product => arr.push(capitalizeFirstLetter(product.Brand)))
             arr = [...new Set(arr)]
             setBrands(arr)
         }
-        catch(err){
+        catch (err) {
             console.error(err)
         }
     }
@@ -106,7 +109,7 @@ const MegaMenu = () => {
     const wrapperRef = useRef(null);
     useOutsideAlerter(wrapperRef);
 
-    const Triangle = () => <div style={{ width: 0, height: 0, borderTop: '10px solid transparent', borderBottom: '10px solid transparent', borderRight: '10px solid #F2F2F2' }}></div>
+    const Triangle = () => <div className='triangle'></div>
 
     const NavItem = (props) => {
         const [isShowed, setIsShowed] = useState(false)
@@ -117,156 +120,91 @@ const MegaMenu = () => {
             setActiveCategory(props.id)
         }
 
-        const navItemStyle = {
-            marginRight: 50,
-            textAlign: 'center',
-            borderStyle: 'solid',
-            borderTopWidth: 0,
-            borderLeftWidth: 0,
-            borderRightWidth: 0,
-            borderColor: '#F16512',
-            cursor: 'pointer'
-        }
-
         return (
             <>
-                <div style={{ borderBottomWidth: isShowed ? 2 : 0, fontWeight: isShowed ? 'bold' : 'inherit', ...navItemStyle }} onMouseOver={mouseOverAction}  >
+                <div className='navBarItem' style={{ borderBottomWidth: isShowed ? 2 : 0, fontWeight: isShowed ? 'bold' : 'inherit', }} onMouseOver={mouseOverAction}  >
                     {capitalizeFirstLetter(props.title)}
                 </div>
             </>
         )
     }
 
-const MiniMenu = (props) => {
+    const MiniMenu = (props) => {
 
-    // Creates an array of objects of subcategories which are the part of the selected category
-    let subCatData = subCategories.filter(subCat => subCat.Category === activeCategory)
+        // Creates an array of objects of subcategories which are the part of the selected category
+        let subCatData = subCategories.filter(subCat => subCat.Category === activeCategory)
 
-    // States to manage selected sub category. Initialised with the first sub category
-    const [activeSubCat, setActiveSubCat] = useState(Object(subCategories[0])._id)
+        // States to manage selected sub category. Initialised with the first sub category
+        const [activeSubCat, setActiveSubCat] = useState(Object(subCategories[0])._id)
 
-    const MiniMenuStyle = {
-        containerStyle: {
-            minHeight: 250,
-            width: isMobileOrTablet ? '95%' : '70%',
-            position: 'absolute',
-            display: showNavItem ? 'flex' : 'none',
-            boxShadow: '0px 5px 10px 1px rgba(0,0,0,0.39)',
-            zIndex: 999999999999999
-        }
-    }
+        const SubCategoryMenu = () => {
 
-    const SubCategoryMenu = () => {
-        const subCategoryStyle = {
-            containerStyle: {
-                display: 'flex',
-                flexDirection: 'column',
-                minWidth: "30%",
-                backgroundColor: 'white',
-                paddingLeft: 10,
-                paddingTop:5,
-                paddingBottom:5
-            },
-            itemStyle: {
-                display: 'flex',
-                flexDirection: 'row',
-                justifyContent: 'space-between',
-                cursor: 'pointer',
-                paddingTop: 5,
-                paddingBottom: 5,
-                paddingLeft: 5,
-                userSelect: 'none'
-            }
-        }
-
-        return <div style={subCategoryStyle.containerStyle}>
-            {subCatData.map(subCat => <Link style={{ textDecoration: 'none', color: 'inherit' }} key={subCat._id} to={`/products?category=${activeCategory}&subcategory=${activeSubCat}`}><div key={subCat._id}
-                style={{ ...subCategoryStyle.itemStyle }} onMouseOver={() => setActiveSubCat(subCat._id)}>
-                <div style={{ fontWeight: activeSubCat === subCat._id ? 'bold' : 'inherit' }}>{capitalizeFirstLetter(subCat.Sub_Category_name)}</div>
-                {activeSubCat === subCat._id ? <Triangle /> : null}
-            </div></Link>
-            )}
-        </div>
-    }
-
-
-    const GroupMenu = () => {
-        const nestedCategoryStyle = {
-            container: {
-                display: 'flex',
-                flexDirection: 'column',
-                backgroundColor: '#F2F2F2',
-                minWidth: "30%",
-                padding: 5,
-                paddingLeft:10
-            }
-        }
-
-        // Creates an array of objects of groups which are the part of the selected category as well as the selected sub category
-        let groupData = groups.filter(group => group.Category === activeCategory && group.Sub_Category === activeSubCat)
-
-        const GroupItem = (props) => {
-            const [isGroupItemVisible, setIsGroupItemVisible] = useState(false)
-            return (
-                <Link key={props._id}
-                    style={{ textDecoration: 'none', color: 'inherit' }}
-                    to={`/products?category=${activeCategory}&subcategory=${activeSubCat}&group=${props._id}`}>
-                    <div onMouseOver={() => setIsGroupItemVisible(true)} onMouseLeave={() => setIsGroupItemVisible(false)} style={{ cursor: 'pointer', padding: 5, userSelect: 'none', fontWeight: isGroupItemVisible ? 'bold' : 'inherit', color: isGroupItemVisible? '#F16512': 'inherit' }} key={props._id}>{capitalizeFirstLetter(props.Group_name)}</div>
-                </Link>
-            )
-        }
-
-        return (
-            <div style={nestedCategoryStyle.container}>
-                {groupData.map(group => <GroupItem key={group._id} _id={group._id} Group_name={group.Group_name} />)}
+            return <div className='subCategoryContainer'>
+                {subCatData.map(subCat => <Link className='link' key={subCat._id} to={`/products?category=${activeCategory}&subcategory=${activeSubCat}`}><div key={subCat._id} className='subCategoryItem' onMouseOver={() => setActiveSubCat(subCat._id)}>
+                    <div style={{ fontWeight: activeSubCat === subCat._id ? 'bold' : 'inherit' }}>{capitalizeFirstLetter(subCat.Sub_Category_name)}</div>
+                    {activeSubCat === subCat._id ? <Triangle /> : null}
+                </div></Link>
+                )}
             </div>
-        )
-    }
+        }
 
-    const PopularBrandsMenu = () => {
-        const BrandItem = ({ brand }) => {
-            const [activeBrandItem, setActiveBrandItem] = useState(false)
+        const GroupMenu = () => {
+
+            // Creates an array of objects of groups which are the part of the selected category as well as the selected sub category
+            let groupData = groups.filter(group => group.Category === activeCategory && group.Sub_Category === activeSubCat)
+
+            const GroupItem = (props) => {
+                const [isGroupItemVisible, setIsGroupItemVisible] = useState(false)
+                return (
+                    <Link key={props._id} className='link'
+                        to={`/products?category=${activeCategory}&subcategory=${activeSubCat}&group=${props._id}`}>
+                        <div onMouseOver={() => setIsGroupItemVisible(true)} onMouseLeave={() => setIsGroupItemVisible(false)} className='groupItem' style={{ fontWeight: isGroupItemVisible ? 'bold' : 'inherit', color: isGroupItemVisible ? '#F16512' : 'inherit' }} key={props._id}>{capitalizeFirstLetter(props.Group_name)}</div>
+                    </Link>
+                )
+            }
 
             return (
-                <div style={{ width: isMobileOrTablet ? '100%' : '50%', padding: 5, color: activeBrandItem ? '#F16512' : 'black', cursor: 'pointer' }} onMouseOver={() => setActiveBrandItem(true)} onMouseLeave={() => setActiveBrandItem(false)}>{brand}</div>
-            )
-        }
-        return (
-            <div style={{ backgroundColor: 'white', width: isMobileOrTablet ? '33%' : 'inherit', padding: 5, paddingLeft: 10 }}>
-                <div style={{ padding: 5, fontSize: '1.1rem', fontWeight: 'bold' }}>Popular Brands</div>
-                <div style={{ display: 'flex', flexDirection: 'row', flexWrap: 'wrap', alignItems: 'flex-start', }}>
-                    {brands.map(brand => <BrandItem key={brand} brand={brand} />)}
+                <div className='groupContainer'>
+                    {groupData.map(group => <GroupItem key={group._id} _id={group._id} Group_name={group.Group_name} />)}
                 </div>
+            )
+        }
+
+        const PopularBrandsMenu = () => {
+            const BrandItem = ({ brand }) => {
+                const [activeBrandItem, setActiveBrandItem] = useState(false)
+
+                return (
+                    <div className='popularBrandItem' style={{ width: isMobileOrTablet ? '100%' : '50%', color: activeBrandItem ? '#F16512' : 'black' }} onMouseOver={() => setActiveBrandItem(true)} onMouseLeave={() => setActiveBrandItem(false)}>{brand}</div>
+                )
+            }
+            return (
+                <div className='popularBrandContainer' style={{ width: isMobileOrTablet ? '33%' : 'inherit', }}>
+                    <div className='popularBrandHeading'>Popular Brands</div>
+                    <div className='popularBrandList'>
+                        {brands.map(brand => <BrandItem key={brand} brand={brand} />)}
+                    </div>
+                </div>
+            )
+        }
+
+        return (
+            <div className='miniMenu' style={{ width: isMobileOrTablet ? '95%' : '70%', display: showNavItem ? 'flex' : 'none', }} ref={wrapperRef}>
+                <SubCategoryMenu />
+                <GroupMenu />
+                <PopularBrandsMenu />
             </div>
         )
     }
-
-    return (
-        <div style={{ ...MiniMenuStyle.containerStyle, }} ref={wrapperRef}>
-            <SubCategoryMenu />
-            <GroupMenu />
-            <PopularBrandsMenu/>
-        </div>
-    )
-}
 
     const NavBar = () => {
-        const navBarStyle = {
-            container: {
-                height: 50,
-                display: 'flex',
-                flexDirection: 'row',
-                alignItems: 'center',
-            }
-        }
         return (
             <div>
-                <div style={{ ...navBarStyle.container, overflowX: 'auto',  }} className='container'>
-                    {categories.map(category => <Link key={category._id} style={{ textDecoration: 'none', color: 'inherit' }} to={`/products?category=${activeCategory}`}>
+                <div className='container navBarContainer'>
+                    {categories.map(category => <Link key={category._id} className='link' to={`/products?category=${activeCategory}`}>
                         <NavItem key={category._id} id={category._id} image={category.category_image} title={category.name} /></Link>)}
                 </div>
-                <div style={{borderStyle: 'solid', borderTopWidth: 0, borderLeftWidth: 0, borderRightWidth: 0, borderBottomWidth: 0.5, borderColor: '#F2F2F2'
-                }}></div>
+                <div className='navBarBorder' ></div>
                 <div className='container' style={{ padding: 0 }}>
                     <MiniMenu title={activeCategory} />
                 </div>
@@ -276,7 +214,13 @@ const MiniMenu = (props) => {
     }
 
     return (
-        <NavBar />
+        <>
+            <div className='container navBarSearchContainer'>
+                <img src='https://upload.wikimedia.org/wikipedia/commons/e/ed/Pepperfry_New_Logo.png' style={{ width: !isMobileOrTablet ? '15%' : '25%', marginRight: !isMobileOrTablet ? 20 : 10 }} />
+                <SearchComponent />
+            </div>
+            <NavBar />
+        </>
     )
 }
 

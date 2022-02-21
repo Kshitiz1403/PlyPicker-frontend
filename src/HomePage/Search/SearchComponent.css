@@ -1,13 +1,12 @@
 .searchbar_search {
-  margin: 0px 20px;
   padding: 5px;
+  padding-left: 10px;
   border: none;
   outline: none;
   border: 2px solid #F2F2F2;
-  /* background-color: black; */
-  /* color: white; */
-  border-radius: 10px;
-  width: 90%;
+  background-color: #F5F5F5;
+  border-radius: 2px;
+  width: 100%;
 }
 
 .searchbar_output {

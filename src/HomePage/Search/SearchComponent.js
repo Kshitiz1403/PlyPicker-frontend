@@ -59,7 +59,7 @@ const SearchComponent = () => {
   };
 
   return (
-    <div>
+    <div style={{width:'95%'}}>
       <input
         className="searchbar_search"
         placeholder="What are you looking for?"
@@ -74,11 +74,11 @@ const SearchComponent = () => {
         onBlur={() => {
           setTimeout(() => {
             setSuggestions([]);
-          }, 1000);
+          }, 500);
         }}
       />
       <div style={{
-        position: 'absolute', zIndex: 999999, backgroundColor: 'white', minWidth: 450, boxShadow: '0px 5px 10px 0px rgba(0,0,0,0.39)', marginLeft: 20,
+        position: 'absolute', zIndex: 999999, backgroundColor: 'white', minWidth: 450, boxShadow: '0px 5px 10px 0px rgba(0,0,0,0.39)',
       }}>
         {suggestions &&
           suggestions.map((suggestion) => (
