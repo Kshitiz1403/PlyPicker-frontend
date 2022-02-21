@@ -1,18 +1,12 @@
 import axios from 'axios'
 import React, { useEffect, useState, useRef } from 'react'
-import { Image } from 'react-bootstrap'
-import { useMediaQuery } from 'react-responsive'
 import { Link } from 'react-router-dom'
-import { PORT } from '../../App'
+import { isMobileOrTablet, PORT } from '../../App'
 import capitalizeFirstLetter from '../../heplerFunctions/capitalizeFirstLetter'
 import SearchComponent from '../Search/SearchComponent'
 import "./MegaMenu.css"
 
 const MegaMenu = () => {
-
-    const isMobileOrTablet = useMediaQuery({
-        query: '(max-width:768px)'
-    })
 
     // Performs all network requests for categories, subcategories and grops
     useEffect(() => {

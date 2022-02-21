@@ -3,20 +3,10 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
-import { BrowserRouter, Route, Routes } from 'react-router-dom';
-import HomePage from './HomePage/HomePage';
-import ProductPage from './ProductPage/ProductPage';
-import ProductDetails from './ProductDetails/ProductDetails';
 
 ReactDOM.render(
   <div className='index'>
-    <BrowserRouter>
-      <Routes>
-        <Route path='/' element={<HomePage />} />
-        <Route path='/products' element={<ProductPage />} />
-        <Route path='/productdetails/:id' element={<ProductDetails />} />
-      </Routes>
-    </BrowserRouter>
+    <App/>
   </div>,
   document.getElementById('root')
 );

@@ -2,7 +2,7 @@ import axios from "axios";
 import React, { useEffect, useState } from "react";
 import "./SearchComponent.css";
 import { Link, useNavigate } from "react-router-dom";
-import { PORT } from "../../App";
+import { isMobileOrTablet, PORT } from "../../App";
 
 const SearchComponent = () => {
   const [searchValue, setSearchValue] = useState("");
@@ -78,7 +78,7 @@ const SearchComponent = () => {
         }}
       />
       <div style={{
-        position: 'absolute', zIndex: 999999, backgroundColor: 'white', minWidth: 450, boxShadow: '0px 5px 10px 0px rgba(0,0,0,0.39)',
+        position: 'absolute', zIndex: 999999, backgroundColor: 'white', width: isMobileOrTablet? '68%' : '50%', boxShadow: '0px 5px 10px 0px rgba(0,0,0,0.39)',
       }}>
         {suggestions &&
           suggestions.map((suggestion) => (

@@ -10,7 +10,6 @@ import SearchComponent from "./Search/SearchComponent";
 function HomePage() {
   return (
     <div style={{overflowX:'hidden'}}>
-      {/* <SearchComponent/> */}
       <MegaMenu />
       <CarouselComponent />
       <Banner />
