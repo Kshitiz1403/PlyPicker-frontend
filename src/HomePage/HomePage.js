@@ -9,9 +9,10 @@ import SearchComponent from "./Search/SearchComponent";
 
 function HomePage() {
   return (
-    <div style={{overflowX:'hidden'}}>
+    <div style={{ overflowX: "hidden" }}>
       <MegaMenu />
-      <CarouselComponent />
+
+      {/* <CarouselComponent /> */}
       <Banner />
       <EveryoneEyeing />
       <BrandstoChoose />
