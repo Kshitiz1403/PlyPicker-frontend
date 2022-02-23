@@ -6,7 +6,7 @@ import HomePage from "./HomePage/HomePage";
 import ProductDetails from "./ProductDetails/ProductDetails";
 import ProductPage from "./ProductPage/ProductPage";
 
-export const PORT = "http://b8bc-103-87-58-158.ngrok.io/api";
+export const PORT = "https://plypicker.loca.lt/api";
 
 export let isMobileOrTablet;
 function App() {

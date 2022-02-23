@@ -42,9 +42,13 @@
   .wishlist_container {
     width: 340px;
   }
+
+  .wishlist_container_open {
+    width: 340px;
+  }
 }
 
-.wishlist_heading{
+.wishlist_heading {
   display: flex;
   justify-content: space-between;
 }
