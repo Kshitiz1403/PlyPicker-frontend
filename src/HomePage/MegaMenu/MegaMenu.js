@@ -7,7 +7,6 @@ import SearchComponent from "../Search/SearchComponent";
 import "./MegaMenu.css";
 import "../Wishlist/Wishlist.css";
 import { FaRegHeart } from "react-icons/fa";
-import { AiOutlineClose } from "react-icons/ai";
 import Wishlist from "../Wishlist/Wishlist";
 const MegaMenu = () => {
   // Performs all network requests for categories, subcategories and grops
@@ -271,10 +270,49 @@ const MegaMenu = () => {
   };
 
   const NavBar = () => {
-    const [navbarWishlist, setNavbarWishlist] = useState(false);  
+
+    function useOutsideAlerterWishlist(ref) {
+      useEffect(() => {
+        /**
+         * Alert if clicked on outside of element
+         */
+        function handleClickOutside(event) {
+          if (ref.current && !ref.current.contains(event.target)) {
+            // alert("outside")
+            console.log("outside")
+            setNavbarWishlist(false)
+          }
+        }
+
+        // Bind the event listener
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => {
+          // Unbind the event listener on clean up
+          document.removeEventListener("mousedown", handleClickOutside);
+        };
+      }, [ref]);
+    }
+    const wishlistWrapperRef = useRef(null)
+    useOutsideAlerterWishlist(wishlistWrapperRef)
+
+
+    const [navbarWishlist, setNavbarWishlist] = useState(false);
 
     const toggleNavbarWishlist = () => setNavbarWishlist(!navbarWishlist);
-    
+
+    useEffect(() => {
+      const handleEscapeToClose = (e) => {
+        if (e.key === "Escape") {
+          setNavbarWishlist(false)
+        }
+      }
+      document.addEventListener("keydown", handleEscapeToClose)
+
+      return () => {
+        document.removeEventListener("keydown", handleEscapeToClose)
+      }
+    }, [navbarWishlist])
+
     return (
       <div className="navbar_main_container_outer">
         <>
@@ -299,14 +337,14 @@ const MegaMenu = () => {
             <MiniMenu title={activeCategory} />
           </div>
         </>
-        <div className="navbar_wishlist" type="button" onClick={ toggleNavbarWishlist }>
-          <FaRegHeart />
-        </div>
-
-        <div className="navbar_wishlist navbar_wishlist_close">
-          <div className={navbarWishlist ? 'wishlist_container_open' : 'wishlist_container'} onClick={ toggleNavbarWishlist }>
-            <Wishlist />
-            {/* <AiOutlineClose /> */}
+        <div ref={wishlistWrapperRef}>
+          <div className="navbar_wishlist" type={"button"}>
+            <FaRegHeart onClick={toggleNavbarWishlist} />
+          </div>
+          <div className="navbar_wishlist navbar_wishlist_close">
+            <div className={navbarWishlist ? 'wishlist_container_open' : 'wishlist_container'}>
+              <Wishlist onClose={toggleNavbarWishlist} />
+            </div>
           </div>
         </div>
       </div>

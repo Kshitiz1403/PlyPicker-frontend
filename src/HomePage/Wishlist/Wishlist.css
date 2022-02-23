@@ -6,8 +6,7 @@
 .wishlist_container {
   position: fixed;
   width: 400px;
-  right: -550px;
-  /* right: 0; */
+  display: none;
   top: 0;
   background-color: #fff;
   height: 100%;
@@ -43,6 +42,11 @@
   .wishlist_container {
     width: 340px;
   }
+}
+
+.wishlist_heading{
+  display: flex;
+  justify-content: space-between;
 }
 
 .wishlist_product_container {
