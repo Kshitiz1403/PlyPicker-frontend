@@ -12,7 +12,7 @@ function HomePage() {
     <div style={{ overflowX: "hidden" }}>
       <MegaMenu />
 
-      {/* <CarouselComponent /> */}
+      <CarouselComponent />
       <Banner />
       <EveryoneEyeing />
       <BrandstoChoose />
