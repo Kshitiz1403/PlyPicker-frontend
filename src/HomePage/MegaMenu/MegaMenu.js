@@ -5,6 +5,7 @@ import { isMobileOrTablet, PORT } from "../../App";
 import capitalizeFirstLetter from "../../heplerFunctions/capitalizeFirstLetter";
 import SearchComponent from "../Search/SearchComponent";
 import "./MegaMenu.css";
+import "../Wishlist/Wishlist.css";
 import { FaRegHeart } from "react-icons/fa";
 import { AiOutlineClose } from "react-icons/ai";
 import Wishlist from "../Wishlist/Wishlist";
@@ -270,6 +271,10 @@ const MegaMenu = () => {
   };
 
   const NavBar = () => {
+    const [navbarWishlist, setNavbarWishlist] = useState(false);  
+
+    const toggleNavbarWishlist = () => setNavbarWishlist(!navbarWishlist);
+    
     return (
       <div className="navbar_main_container_outer">
         <>
@@ -294,13 +299,15 @@ const MegaMenu = () => {
             <MiniMenu title={activeCategory} />
           </div>
         </>
-        <div className="navbar_wishlist" type="button">
+        <div className="navbar_wishlist" type="button" onClick={ toggleNavbarWishlist }>
           <FaRegHeart />
         </div>
 
         <div className="navbar_wishlist navbar_wishlist_close">
-          <AiOutlineClose />
-          <Wishlist />
+          <div className={navbarWishlist ? 'wishlist_container_open' : 'wishlist_container'} onClick={ toggleNavbarWishlist }>
+            <Wishlist />
+            {/* <AiOutlineClose /> */}
+          </div>
         </div>
       </div>
     );

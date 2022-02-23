@@ -4,7 +4,8 @@ import "./Wishlist.css";
 
 function Wishlist() {
   return (
-    <div className="wishlist_container">
+    <div>
+    {/* <div className="wishlist_container"> */}
       <div className="wishlist_heading">My Wishlist</div>
       <div className="wishlist_product_container">
         <div className="wishlist_product_info">
@@ -166,6 +167,7 @@ function Wishlist() {
           <div className="wishlist_remove">Remove</div>
         </div>
       </div>
+    {/* </div> */}
     </div>
   );
 }
