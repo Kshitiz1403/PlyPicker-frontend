@@ -14,14 +14,6 @@ function ProductPage() {
     getData();
   }, []);
 
-  // useEffect(() => {
-  //   console.log(query)
-  // }, [query])
-
-  // useEffect(() => {
-  //   updateQuery()
-  // }, [params])
-
   const [queryS, setQueryS] = useState("");
 
   let NAME_SEARCH_PARAM;
@@ -31,7 +23,7 @@ function ProductPage() {
 
   let params = {};
 
-  if(searchParams.get("name")){
+  if (searchParams.get("name")) {
     NAME_SEARCH_PARAM = searchParams.get("name")
     params.name = NAME_SEARCH_PARAM
   }
@@ -53,14 +45,6 @@ function ProductPage() {
   let query = Object.keys(params)
     .map((k) => esc(k) + "=" + esc(params[k]))
     .join("&");
-  // setQueryS(query)
-
-  // const updateQuery = () =>{
-
-  //   let q = Object.keys(params).map(k => esc(k) + '=' + esc(params[k])).join('&')
-  //   setQueryS(q)
-
-  // }
 
   const getData = async () => {
     const productData = await (
@@ -75,23 +59,17 @@ function ProductPage() {
 
   const getMax = (productData) => {
     let maxi = 0;
-    productData.map((item) => {
-      maxi = Math.max(maxi, item.Product_Price);
-    });
+    productData.map((item) =>  maxi = Math.max(maxi, item.Product_Price))
     setMaxPrice(maxi);
     return maxi;
   };
 
   const getMin = (productData) => {
     let mini = Number.MAX_SAFE_INTEGER;
-    productData.map((item) => {
-      mini = Math.min(mini, item.Product_Price);
-    });
+    productData.map((item) => mini = Math.min(mini, item.Product_Price));
     setMinPrice(mini);
     return mini;
   };
-
-  // Slider Filter
 
   // Double Slider
   const [value, setValue] = useState([0, 1000]);
@@ -100,16 +78,6 @@ function ProductPage() {
   };
 
   const getText = (value) => `${value}`;
-
-  // Single slider
-
-  const [singlevalue, setSingleValue] = useState(1000);
-
-  const handleValue = (e, newValue) => {
-    setSingleValue(newValue);
-  };
-
-  const getNewText = (newValue) => `${newValue}`;
 
   // //////////////////////////////////
   const [maxPrice, setMaxPrice] = useState(0);
@@ -185,11 +153,11 @@ function ProductPage() {
               {/* Renders description only if description field exists */}
               {item.Product_Description
                 ? // Keeps the description limited to MAX_DESCR_LENGTH
-                  `${item.Product_Description}`.length > MAX_DESCR_LENGTH
+                `${item.Product_Description}`.length > MAX_DESCR_LENGTH
                   ? `${item.Product_Description}`.substring(
-                      0,
-                      MAX_DESCR_LENGTH
-                    ) + "..."
+                    0,
+                    MAX_DESCR_LENGTH
+                  ) + "..."
                   : `${item.Product_Description}`
                 : null}
             </p>
@@ -202,26 +170,26 @@ function ProductPage() {
       </div>
     ));
 
-    // update page count
-    pageCount = Math.ceil(items.filter(item => item.Product_Price >= Math.min(...value) && item.Product_Price <= Math.max(...value)).length / usersPerPage);
+  // update page count
+  pageCount = Math.ceil(items.filter(item => item.Product_Price >= Math.min(...value) && item.Product_Price <= Math.max(...value)).length / usersPerPage);
 
-    var paginationBar = <div></div>
-    if (pageCount > 0) {
-      paginationBar = 
+  var paginationBar = <div></div>
+  if (pageCount > 0) {
+    paginationBar =
       <ReactPaginate
-      previousLabel={"Previous"}
-      nextLabel={"Next"}
-      pageCount={pageCount}
-      onPageChange={changePage}
-      containerClassName={"paginationBttns"}
-      previousLinkClassName={"previousBttn"}
-      nextLinkClassName={"nextBttn"}
-      disabledClassName={"paginationDisabled"}
-      activeClassName={"paginationActive"}
-    />
-    } else {
-      paginationBar = <div></div>
-    }
+        previousLabel={"Previous"}
+        nextLabel={"Next"}
+        pageCount={pageCount}
+        onPageChange={changePage}
+        containerClassName={"paginationBttns"}
+        previousLinkClassName={"previousBttn"}
+        nextLinkClassName={"nextBttn"}
+        disabledClassName={"paginationDisabled"}
+        activeClassName={"paginationActive"}
+      />
+  } else {
+    paginationBar = <div></div>
+  }
 
   return (
     <>
@@ -295,24 +263,17 @@ function ProductPage() {
                           onChange={changeValue}
                           min={minPrice}
                           max={maxPrice}
+                          step={Math.round(((maxPrice - minPrice) / 10) / 10) * 10 === 0 ? 1 : Math.round(((maxPrice - minPrice) / 10) / 10) * 10}
+                          marks
                           defaultValue={1000}
                           getAriaValueText={getText}
                           valueLabelDisplay="auto"
                         />
+                        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                          <div>₹{Math.min(...value)}</div>
+                          <div>₹{Math.max(...value)}</div>
+                        </div>
                       </li>
-                      {/* <li className="nav-item">
-                        // Slider Filter
-
-                        <Slider
-                          style={{ marginTop: 20, width: 150 }}
-                          defaultValue={singlevalue}
-                          onChange={handleValue}
-                          min={0}
-                          max={5009}
-                          getAriaValueText={getNewText}
-                          valueLabelDisplay="auto"
-                        />
-                      </li> */}
                     </ul>
                   </div>
                 </div>
