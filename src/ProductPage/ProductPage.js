@@ -94,6 +94,7 @@ function ProductPage() {
     // +1 => ascending
 
     if (!isChecked) {
+      setActiveSortingStatus("")
       return setItems(products);
     }
 
