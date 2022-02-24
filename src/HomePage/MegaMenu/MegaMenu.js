@@ -8,6 +8,8 @@ import "./MegaMenu.css";
 import "../Wishlist/Wishlist.css";
 import { FaRegHeart } from "react-icons/fa";
 import Wishlist from "../Wishlist/Wishlist";
+import logo from "../../images/logo.png";
+
 const MegaMenu = () => {
   // Performs all network requests for categories, subcategories and grops
   useEffect(() => {
@@ -270,7 +272,6 @@ const MegaMenu = () => {
   };
 
   const NavBar = () => {
-
     function useOutsideAlerterWishlist(ref) {
       useEffect(() => {
         /**
@@ -279,8 +280,8 @@ const MegaMenu = () => {
         function handleClickOutside(event) {
           if (ref.current && !ref.current.contains(event.target)) {
             // alert("outside")
-            console.log("outside")
-            setNavbarWishlist(false)
+            console.log("outside");
+            setNavbarWishlist(false);
           }
         }
 
@@ -292,9 +293,8 @@ const MegaMenu = () => {
         };
       }, [ref]);
     }
-    const wishlistWrapperRef = useRef(null)
-    useOutsideAlerterWishlist(wishlistWrapperRef)
-
+    const wishlistWrapperRef = useRef(null);
+    useOutsideAlerterWishlist(wishlistWrapperRef);
 
     const [navbarWishlist, setNavbarWishlist] = useState(false);
 
@@ -303,15 +303,15 @@ const MegaMenu = () => {
     useEffect(() => {
       const handleEscapeToClose = (e) => {
         if (e.key === "Escape") {
-          setNavbarWishlist(false)
+          setNavbarWishlist(false);
         }
-      }
-      document.addEventListener("keydown", handleEscapeToClose)
+      };
+      document.addEventListener("keydown", handleEscapeToClose);
 
       return () => {
-        document.removeEventListener("keydown", handleEscapeToClose)
-      }
-    }, [navbarWishlist])
+        document.removeEventListener("keydown", handleEscapeToClose);
+      };
+    }, [navbarWishlist]);
 
     return (
       <div className="navbar_main_container_outer">
@@ -342,7 +342,13 @@ const MegaMenu = () => {
             <FaRegHeart onClick={toggleNavbarWishlist} />
           </div>
           <div className="navbar_wishlist navbar_wishlist_close">
-            <div className={navbarWishlist ? 'wishlist_container_open' : 'wishlist_container'}>
+            <div
+              className={
+                navbarWishlist
+                  ? "wishlist_container_open"
+                  : "wishlist_container"
+              }
+            >
               <Wishlist onClose={toggleNavbarWishlist} />
             </div>
           </div>
@@ -355,10 +361,11 @@ const MegaMenu = () => {
     <>
       <div className="container navBarSearchContainer">
         <img
-          src="https://upload.wikimedia.org/wikipedia/commons/e/ed/Pepperfry_New_Logo.png"
+          src={logo}
           style={{
             width: !isMobileOrTablet ? "15%" : "25%",
             marginRight: !isMobileOrTablet ? 20 : 10,
+            marginTop: "5px",
           }}
         />
         <SearchComponent />
