@@ -4,7 +4,7 @@ import { useLocation } from "react-router-dom";
 import { PORT } from "../App";
 import StarRating from "../StarRating/StarRating";
 import "./ProductDetails.css";
-
+import ProductSuggestion from "./ProductSuggestions/ProductSuggestion";
 
 //   state = {
 //     products: [
@@ -33,8 +33,6 @@ import "./ProductDetails.css";
 // class ProductDetails extends React.Component {
 
 const ProductDetails = () => {
-
-
   // myRef = React.createRef();
 
   // handlePoses = (index) => {
@@ -54,17 +52,16 @@ const ProductDetails = () => {
   // render() {
   // const { products, index } = this.state;
   // console.log(products);
-  const location = useLocation()
-  const productID = location.pathname.split('/productdetails/')[1]
-  console.log(productID)
+  const location = useLocation();
+  const productID = location.pathname.split("/productdetails/")[1];
+  console.log(productID);
 
-  const [product, setProduct] = useState({})
+  const [product, setProduct] = useState({});
 
   useEffect(async () => {
-    const data = await (await axios.get(`${PORT}/products/${productID}`)).data
-    setProduct(data)
-  }, [])
-
+    const data = await (await axios.get(`${PORT}/products/${productID}`)).data;
+    setProduct(data);
+  }, []);
 
   return (
     <>
@@ -77,10 +74,7 @@ const ProductDetails = () => {
                       src={item.product_image[index]}
                       alt={item.product_name}
                     /> */}
-              <img
-                src={product.Product_Image}
-                alt={product.Product_Name}
-              />
+              <img src={product.Product_Image} alt={product.Product_Name} />
             </div>
 
             {/* <div
@@ -131,9 +125,10 @@ const ProductDetails = () => {
           </div>
         </div>
       </div>
+      <ProductSuggestion />
     </>
   );
   // }
-}
+};
 
 export default ProductDetails;

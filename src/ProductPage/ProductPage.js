@@ -24,8 +24,8 @@ function ProductPage() {
   let params = {};
 
   if (searchParams.get("name")) {
-    NAME_SEARCH_PARAM = searchParams.get("name")
-    params.name = NAME_SEARCH_PARAM
+    NAME_SEARCH_PARAM = searchParams.get("name");
+    params.name = NAME_SEARCH_PARAM;
   }
 
   if (searchParams.get("category")) {
@@ -59,14 +59,14 @@ function ProductPage() {
 
   const getMax = (productData) => {
     let maxi = 0;
-    productData.map((item) =>  maxi = Math.max(maxi, item.Product_Price))
+    productData.map((item) => (maxi = Math.max(maxi, item.Product_Price)));
     setMaxPrice(maxi);
     return maxi;
   };
 
   const getMin = (productData) => {
     let mini = Number.MAX_SAFE_INTEGER;
-    productData.map((item) => mini = Math.min(mini, item.Product_Price));
+    productData.map((item) => (mini = Math.min(mini, item.Product_Price)));
     setMinPrice(mini);
     return mini;
   };
@@ -94,7 +94,7 @@ function ProductPage() {
     // +1 => ascending
 
     if (!isChecked) {
-      setActiveSortingStatus("")
+      setActiveSortingStatus("");
       return setItems(products);
     }
 
@@ -154,11 +154,11 @@ function ProductPage() {
               {/* Renders description only if description field exists */}
               {item.Product_Description
                 ? // Keeps the description limited to MAX_DESCR_LENGTH
-                `${item.Product_Description}`.length > MAX_DESCR_LENGTH
+                  `${item.Product_Description}`.length > MAX_DESCR_LENGTH
                   ? `${item.Product_Description}`.substring(
-                    0,
-                    MAX_DESCR_LENGTH
-                  ) + "..."
+                      0,
+                      MAX_DESCR_LENGTH
+                    ) + "..."
                   : `${item.Product_Description}`
                 : null}
             </p>
@@ -172,11 +172,17 @@ function ProductPage() {
     ));
 
   // update page count
-  pageCount = Math.ceil(items.filter(item => item.Product_Price >= Math.min(...value) && item.Product_Price <= Math.max(...value)).length / usersPerPage);
+  pageCount = Math.ceil(
+    items.filter(
+      (item) =>
+        item.Product_Price >= Math.min(...value) &&
+        item.Product_Price <= Math.max(...value)
+    ).length / usersPerPage
+  );
 
-  var paginationBar = <div></div>
+  var paginationBar = <div></div>;
   if (pageCount > 0) {
-    paginationBar =
+    paginationBar = (
       <ReactPaginate
         previousLabel={"Previous"}
         nextLabel={"Next"}
@@ -188,8 +194,9 @@ function ProductPage() {
         disabledClassName={"paginationDisabled"}
         activeClassName={"paginationActive"}
       />
+    );
   } else {
-    paginationBar = <div></div>
+    paginationBar = <div></div>;
   }
 
   return (
@@ -264,13 +271,23 @@ function ProductPage() {
                           onChange={changeValue}
                           min={minPrice}
                           max={maxPrice}
-                          step={Math.round(((maxPrice - minPrice) / 10) / 10) * 10 === 0 ? 1 : Math.round(((maxPrice - minPrice) / 10) / 10) * 10}
+                          step={
+                            Math.round((maxPrice - minPrice) / 10 / 10) * 10 ===
+                            0
+                              ? 1
+                              : Math.round((maxPrice - minPrice) / 10 / 10) * 10
+                          }
                           marks
                           defaultValue={1000}
                           getAriaValueText={getText}
                           valueLabelDisplay="auto"
                         />
-                        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                        <div
+                          style={{
+                            display: "flex",
+                            justifyContent: "space-between",
+                          }}
+                        >
                           <div>₹{Math.min(...value)}</div>
                           <div>₹{Math.max(...value)}</div>
                         </div>
