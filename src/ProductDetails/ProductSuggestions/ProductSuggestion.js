@@ -4,7 +4,7 @@ import "./ProductSuggestion.css";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 
-function ProductSuggestion() {
+function ProductSuggestion(props) {
   var settings = {
     dots: true,
     infinite: false,
@@ -40,7 +40,7 @@ function ProductSuggestion() {
     ],
   };
 
-  const Item = () => (
+  const Item = (props) => (
     <div
       className="suggestion_product_main"
       // className="product_suggestion_product_container"
@@ -54,7 +54,8 @@ function ProductSuggestion() {
         }}
       >
         <img
-          src="https://www.cera-india.com/wp-content/uploads/2020/09/F9025102.jpeg"
+          src={props.image}
+          // src="https://www.cera-india.com/wp-content/uploads/2020/09/F9025102.jpeg"
           alt=""
           style={{
             objectFit: "contain",
@@ -62,23 +63,17 @@ function ProductSuggestion() {
           }}
         />
       </div>
-      <div className="product_suggestion_pname">NAME</div>
-      <div className="product_suggestion_pamount">PRICE</div>
+      <div className="product_suggestion_pname">{props.name}</div>
+      <div className="product_suggestion_pamount">{props.price}</div>
     </div>
   );
   return (
     <div className="container">
       <div className="product_suggestion_container">
-        <div className="product_suggestion_heading">You might also like</div>
         <div>
-          <h2> Responsive </h2>
+          <h2>You might also like</h2>
           <Slider {...settings}>
-            <Item />
-            <Item />
-            <Item />
-            <Item />
-            <Item />
-            <Item />
+            {props.data.splice(0,10).map(item=><Item name={item.Product_Name} price={item.Product_Price} image={item.Product_Image}/>)}
           </Slider>
         </div>
       </div>
