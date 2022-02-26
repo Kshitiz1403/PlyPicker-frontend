@@ -56,19 +56,21 @@ const ProductDetails = () => {
   const productID = location.pathname.split("/productdetails/")[1];
 
   const [product, setProduct] = useState({});
-  const [groupID, setGroupID] = useState('')
-  const [productsWithGroup, setProductsWithGroup] = useState([])
+  const [groupID, setGroupID] = useState("");
+  const [productsWithGroup, setProductsWithGroup] = useState([]);
 
   useEffect(async () => {
     const data = await (await axios.get(`${PORT}/products/${productID}`)).data;
     setProduct(data);
-    setGroupID(data.Group)
+    setGroupID(data.Group);
   }, []);
 
-  useEffect(async()=>{
-    const data = await (await axios.get(`${PORT}/products?Group=${groupID}`)).data
-    setProductsWithGroup(data)
-  }, [])
+  useEffect(async () => {
+    const data = await (
+      await axios.get(`${PORT}/products?Group=${groupID}`)
+    ).data;
+    setProductsWithGroup(data);
+  }, []);
 
   return (
     <>
@@ -132,7 +134,7 @@ const ProductDetails = () => {
           </div>
         </div>
       </div>
-      <ProductSuggestion data={productsWithGroup}/>
+      <ProductSuggestion data={productsWithGroup} />
     </>
   );
   // }
